@@ -32,6 +32,7 @@ createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 #### More thing
 
 + To ensure the swap chain is compatible with you window surface
+
 + Basically three kinds of properties
   + basic surface capabilities (min/max number of images in swap chain, min/max width and height of images)
   + surface formats (pixel format, color space)
@@ -44,4 +45,5 @@ createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 - Surface format (color depth)
 - Presentation mode (conditions for "swapping" images to the screen)
 - Swap extent (resolution of images in swap chain)
+
 
