@@ -40,3 +40,47 @@ Latin "amare"
   + mean: a lover, often secret, not allowed by law or custom
   + He had been coming to the house for two years before her brother realized that he was actually the paramour of their shy and withdrawn sister
 
+
+
+### BELL
+
+Latin "war"
+
++ antebellum
+  + mean: existing before a war, especially before the American Civil War
+  + eg: When World War I was over, the French nobility found it impossible to return to their extravagant antebellum way of life.
+
++ bellicose
+  + mean: warlike, aggressive, quarrelsome
+  + eg: The more bellicose party always got elected whenever there was tension along the border and the public believed that military action would lead to security.
+  + generally applied to nations and their leaders
++ belligerence
+  + mean: aggressiveness, combativeness
+  + eg: The belligerence in Turner's voice told them that the warning was a serious threat
+  + from personal to global
++ rebellion
+  + mean: open defiance and opposition, sometimes armed, to a person or thing in authority.
+  + eg: A student rebellion that afternoon in Room 13 resulted in the new substitute teacher racing out of the building in tears.
+
+
+
+### PAC
+
+Latin "agree" and "peace"
+
+pacific ocean
+
++ pacify
+  + mean: to soothe anger or agitation; to subdue by armed action
+  + eg: It look the police hours to pacify the angry demonstrators.
++ pacifist
+  + mean: A person opposed to war or violence, especially someone who refuses to bear arms or to fight, on moral or religious grounds
+  + eg: Her grandfather had fought in the Marrines in World War II, but in his later years he had become almost a pacifist, opposing every war for on reason or another.
++ pact
+  + mean: An agreement between two or more people or groups; a treaty or formal agreement between nations to deal with a problem or to resolve a dispute.
+  + eg: The girls made a pact never to reveal what had happened on that terrifying night in the abandoned house.
+  + generally used in the field of international relations; any solemn agreement or promise between two people 
++ pace
+  + mean: contrary to the opinion of 
+  + eg: She had only three husbands,  pace some Hollywood historians who claim she had as many as six.
+  + used only by intellectuals; often use it when correcting an opinion that many people believe
