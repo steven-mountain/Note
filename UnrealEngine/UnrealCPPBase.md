@@ -14,11 +14,7 @@
 + 反射和垃圾回收
   + 在代码之前加上 `SPECIAL_MACRO()` 虚幻会使用UHT来实现反射和垃圾回收
   + UHT包含`#include "*.generated.h"`中，并且此包含之后不能再包含其他文件
-  + 蓝图读写：BlueprintReadWrite
-  + 蓝图调用：BlueprintCall
-  + 分类：Category = “类别名称”
   + 一个问题：每次重新生成，反射代码即使不修改也会重新生成，改问题在4.26已经得到修复
-  
 + C++类转蓝图类
   + 需要在UCLASS()中加入 Blueprintable 
   + 重新生成的方式
@@ -29,7 +25,6 @@
   + LOG
   + WARNNING
   + ERROR
-
 + 从类实例化
   + construct
 + 如何删除c++类
@@ -38,3 +33,13 @@
   + 在项目文件中
     + 删除source中的.h和.cpp文件
     + 然后再打开引擎
+
++ 蓝图宏
+  + 蓝图读写：BlueprintReadWrite
+  + 蓝图调用：BlueprintCall
+  + 分类：Category = “类别名称”，子分类”类别名称|子分类“
+  + 对于组件一般给的限定词是： VisibleAnywhere
+  + 只允许在实例中修改：EditInstanceOnly
+  + 只允许在模板中编辑：EditDefaultOnly
+  + 只允许在模板中可见：VisibleDefaultOnly
+  + 处处可编辑：EditAnywhere
