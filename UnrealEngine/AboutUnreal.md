@@ -12,6 +12,9 @@
   + 可以进行布尔运算
   + 费性能：create static mesh转换为静态网格
   + 有专门的geometry编辑模式
++ content browser里控制显示，使用view options
++ 在UE5中，错误 实时编码处于活动状态时无法构建。退出编辑器 和游戏，或者在编辑器中迭代代码时按 Ctrl+Alt+F11 或 游戏
++ 此功能需要从 Unreal 而不是从 IDE 构建。
 
 
 
