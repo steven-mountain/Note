@@ -55,3 +55,46 @@ QueueFamily如何查找呢
 
 根据上面保存的swapchainiamges，为每一个swapchainimage创建一个iamgeview
 
+
+
+#### pipeline
+
+pipeline的创建需要renderpass，然后分为两个大的阶段，可编程管线和固定管线。
+
+
+
+##### 可编程管线
+
+主要是将顶点着色器，片元着色器等获取shader代码，然后编译成spv，并将这些封装在shader module中。
+
+
+
+##### 固定管线
+
+固定管线需要显示的指定各个阶段：
+
++ dynamic state
++ vertexinput
++ inputassamble
++ viewport， scissor
++ rasterizer
++ multisampling
++ depth and stencil testing
++ colorblend
++ pipeline layout
+
+
+
+##### render pass
+
+创建renderpass需要
+
++ 一堆附件
++ 这些附件的引用
++ 一堆 subpass
++ 以及它们之间的关联关系
+
+ 创建完以上的这些东西后，就可以创建pipeline了
+
+
+
