@@ -98,3 +98,13 @@ pip show package
 
 F12 network media
 
+
+
+#### git冲突处理
+
++ 1、编辑冲突文件，决定要保留的内容，然后删掉三行分割线
++ 2、`git add` 将冲突文件添加到暂存区
++ 3、`git commit`提交
++ git log 查看提交记录
++ `git status` 查看冲突文件
++ 退出合并的中间状态：`git merge --abort`
