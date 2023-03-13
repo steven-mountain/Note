@@ -31,7 +31,7 @@
 
 #### pipeline vertex input
 
-设置图形管道来接收数据
+设置图形管道来接收数据，前面两个description绑定在pipeline中
 
 
 
@@ -52,3 +52,40 @@
 + 内存分配
 + bindbuffermemory
 + 当buffer不可用的时候，我们的memory也就可以清除了
+
+向vertex buffer中填充数据（通过映射内存）
+
++ vkmapmemory
++ memcpy
++ vkunmapmemory
+
+在recordcommandbuffer中bingvertexbuffer
+
+
+
+#### Staging buffer
+
+为什么要用stagingbuffer，因为目前的方法也就是前面设置的memory type CPU也可以访问，这就不太好了，不太专一，会影响性能。
+
+需要`VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT` 来指定由专一的gpu访问，而cpu不能访问
+
+关于staging buffer 我觉得这个老哥（戏命尸）理解的很好，地址如下
+
+https://blog.csdn.net/weixin_44200074/article/details/107814898
+
+```c
+GPU有自己的内存，访问自己的显存要比从CPU那边内存传来的快
+
+临时缓冲区和顶点缓冲区没有区别，只是在创建缓冲区中设置的属性不一样而已。临时缓冲区充当辅助作用，**可以方便在缓冲区之间传递数据**，前提是需要传输队列，通常来说有图形队列的都有传输队列。
+**同时让显卡可以在显存中读取数据，而不是在CPU读取数据。**
+    
+    缓冲区内存属性
+HOST_VISIBLE: 主机可见可访问，即内存
+DEVICE_LOCAL：设备内存，即显存
+```
+
+缓冲区之间传输数据需要传输队列
+
++ 在usegae里设置 ==源== 和 ==目的==
++ 使用command buffer来执行传输
++ vkCmdCopyBuffer
