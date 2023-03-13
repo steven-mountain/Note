@@ -15,7 +15,7 @@
 
 QueueFamily如何查找呢
 
-+ 先列举出来，然后找到符号要求的
++ 先列举出来，然后找到符合要求的
 
 
 
@@ -25,7 +25,7 @@ QueueFamily如何查找呢
 
 + 启用GPU的feature在 VkPhysicalDeviceFeatures
 + VkDeviceCreateInfo
-+ 还需要在createinfo中指定extension
++ 还需要在createinfo中指定extension(在 physical device中检查是否支持)
 
 
 
@@ -43,7 +43,7 @@ QueueFamily如何查找呢
   + presentmode
   + extent
 + 设置iamge count
-+ 有需要queuefamily，杀千刀的
++ 又需要queuefamily，杀千刀的，用来判断时候所需要的queuefamily是否在一张显卡上
 + 还需要保存三兄贵
   + swapchainImages
   + swapchainimageformat

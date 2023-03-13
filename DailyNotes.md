@@ -85,3 +85,16 @@ pip show package
 + pycharm 镜像源：
 
 在 File -> settings->project:项目名称->project interpretery页面点击右边的“+”号，然后点击“Manager Repositories”
+
+
+
+#### 网页不让复制？
+
+直接win+r 然后read://
+
+
+
+#### F12抓包文件
+
+F12 network media
+
