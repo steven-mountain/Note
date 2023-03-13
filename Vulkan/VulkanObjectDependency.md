@@ -98,3 +98,46 @@ pipeline的创建需要renderpass，然后分为两个大的阶段，可编程�
 
 
 
+#### Framebuffer
+
+需要swapchainimage，并为每一个swapchainimage创建一个framebuffer
+
+
+
+#### command pool
+
+需要queuefamily，因为我们的command最后是提交到device queue里运行的
+
+每个command pool只能分配为 某一类型的 queue上面
+
+
+
+#### command buffer
+
+从command pool中分配command buffer
+
+
+
+##### command buffer recording
+
++ command buffer begin
++ render pass
++ bind pipeline
++ viewport and scissors set
++ draw
++ end render pass
++ end command buffer
+
+
+
+#### rendering and presentation
+
++ 需要semaphore 后者fences来同步
++ 等前一frame
++ 获取swapchain imageview
++ recorder command buffer
++ 提交graphics queue
++ 在 render pass 中配置好 subpass dependencies
++ 提交 present queue(这个拓展的，不在vulkan core内)
++ 然后就可以看到我们的三角形了
+

@@ -29,3 +29,26 @@ fences
 
 
 
+#### subpass 依赖
+
+renderpass的==开始==和==结尾==有两个内建的passdependencies，但是呢==前者==假定transitions在pipeline开始的时候就开始了，这是不对的。
+
+```c++
+typedef struct VkSubpassDependency {
+    uint32_t                srcSubpass; // who start my source subpasses who i am dependent on
+    uint32_t                dstSubpass; // who i am 
+    VkPipelineStageFlags    srcStageMask; //tell you what stage everything is dependent on 
+    // Bitmask specifying pipeline stages
+    VkPipelineStageFlags    dstStageMask;
+    VkAccessFlags           srcAccessMask; // where you want things on in this pass  memory access types
+    VkAccessFlags           dstAccessMask;
+    VkDependencyFlags       dependencyFlags;
+} VkSubpassDependency;
+```
+
+
+
+#### 然后便是presentation
+
+将相关的配置写入对应的createinfo就可以了
+

@@ -62,3 +62,26 @@
 + footer
 
   一般用于关闭issue
+
+
+
+#### python 常用命令
+
+```c++
+	 //  查找pip的配置文件
+pip config -v list
+    
+    // 修改镜像源
+pip config set pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+	// 查找python 路径
+where python
+    
+    // 查找pip安装的库路径
+pip show package
+
+```
+
++ pycharm 镜像源：
+
+在 File -> settings->project:项目名称->project interpretery页面点击右边的“+”号，然后点击“Manager Repositories”
