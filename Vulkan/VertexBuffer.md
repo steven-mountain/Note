@@ -35,6 +35,18 @@
 
 
 
+====description主要是给pipeline用的，告诉pipeline如何解析这些数据 这两者其实是分开的
+
+而后面的vertexbuffer主要是告诉commandbuffer如何获取数据，以及数据存储的位置
+
+vertex的用法就好像是，
+
++ 你需要一块硬盘，vertex buffer 
++ 然后别人根据你的需求选取了一块合适的给你， VkMemoryRequirements
++ 然后你再检查一遍这块盘是否能满足你的所有需求， VkPhysicalDeviceMemoryProperties
++ 将硬盘拿到手，这个硬盘的使用权就归你了 bind
++ 向硬盘里写数据 memcpy
+
 #### vertex buffer
 
 + 在vulkan中buffer是一块内存区域用于存储共显卡随机读取的数据
@@ -46,11 +58,10 @@
 创建buffer对象之后，还需要查询其内存需求，然后为其分配内存
 
 + VkMemoryRequirements 
-
 + VkPhysicalDeviceMemoryProperties ->memorytype
-
 + 内存分配
 + bindbuffermemory
++ 传输数据
 + 当buffer不可用的时候，我们的memory也就可以清除了
 
 向vertex buffer中填充数据（通过映射内存）
