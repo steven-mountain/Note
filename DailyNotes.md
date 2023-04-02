@@ -106,10 +106,17 @@ F12 network media
 + 2、`git add` 将冲突文件添加到暂存区
 + 3、`git commit`提交
 + git log 查看提交记录
++ `git status` 查看冲突文件退出合并的中间状态：`git merge --abort`
 + `git status` 查看冲突文件
 + 退出合并的中间状态：`git merge --abort`
 
-
+#### git查看状态
+```powershell
+git status 查看改变的文件列表
+git status -s 查看改变的文件列表简化版
+git diff或者git diff filename查看不在缓冲区的文件发生的改变
+git diff --cached或者git diff --staged查看缓冲区的文件发生的改变
+git diff HEAD是git diff和git diff --cached的合并
 
 #### powershell 奇淫巧计
 
