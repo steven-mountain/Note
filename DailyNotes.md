@@ -72,7 +72,7 @@
 pip config -v list
     
     // 修改镜像源
-pip config set pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 	// 查找python 路径
 where python
@@ -108,3 +108,59 @@ F12 network media
 + git log 查看提交记录
 + `git status` 查看冲突文件
 + 退出合并的中间状态：`git merge --abort`
+
+
+
+#### powershell 奇淫巧计
+
++ 计算hash，文件验证，可以使用 Certutil
++ 判断两个字符串是否相等， -eq
+
+
+
+#### 好用软件合集
+
++ 压缩加密：7-zip
++ 生成gif：screenToGif
++ 卸载软件：geek
++ windows小工具包：powertoys
++ 文件分类：dropit
++ 鼠标精灵：tinytask
++ 文件查找：everything
+
+
+
+#### python 获取到的正则表达式的某一项
+
++ re
++ r'(.+?)sljdf‘
++ .group() 获取值，加数字就是第几个
+
+
+
+#### pandas 读取csv
+
+用pandas因为方便点
+
++ pd.readcsv("cvs文件路径")
++ array=data.values[0::,0::]  *#读取全部行，全部列*， 左开右闭
++ data_csv.to_csv("./Student.csv", index=False, sep=',') *# 将新增的列数据，增加到原始数据中*
+
+
+
+#### python打包
+
+```python
+pyinstaller 
+Pyinstaller -F -w -i chengzi.ico py_word.py
+```
+
+
+
+#### python 运行程序加参数
+
+```python
+import sys
+username = sys.argv[1]
+password = sys.argv[2]
+```

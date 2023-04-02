@@ -100,3 +100,8 @@ DEVICE_LOCAL：设备内存，即显存
 + 在usegae里设置 ==源== 和 ==目的==
 + 使用command buffer来执行传输
 + vkCmdCopyBuffer
+
+
+
+#### index buffer
+
