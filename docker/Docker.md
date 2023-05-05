@@ -94,6 +94,8 @@ history
 
 Alpine：一个非常小的Linux发行版
 
+Alipne不包含apt，useradd，bash
+
 
 
 #### 2.3 包管理
@@ -352,9 +354,196 @@ usrmod -G 组名 用户名
 
 # 查看用户属于哪些组
 groups 用户名
+
+# Linux primary 组 和 secondary 组
+# primary 只有一个
+# secondary 需要有多个
 ```
 
 
+
+#### 2.11 文件权限管理
+
+```bash
+drwxr-xr--x # d 是目录
+-rw-r--r--  # - 是文件
+# 用户 主组 其他人 
+# 修改文件权限
+chmod u+x/u-x 文件名
+chmod g
+chmod o 
+```
+
+
+
+### 3、docker 镜像
+
+#### 3.1 镜像与容器的区别
+
++ 镜像：包含应用所需的任何东西
+  + a cut-down os
+  + 第三方库
+  + 应用文件
+  + 环境变量
++ 容器：更像是一个虚拟机
+  + 提供一个隔离的环境
+  + 可以启动和重启
+  + 只是一个进程
+
+#### 3.2 Dockerfile
+
++ FROM
+
+  指定base image，一般是alpine，
+
+  `docker build -t react-app .`  其中`-t`表示指定容器的名称的`tag`，`.`表示使用当前目录
+
+
+
++ COPY
+
+  从Dockerfile一级中拷贝文件，指定了WORKDIR，那么就从WORKDIR中找文件
+
+  如果拷贝到的目录不在，docker会自动创建一个。
+
+  `COPY package*.json /app`：将所有package开头的json文件拷贝到容器的/app目录中
+
+  如果是多个文件，那么容器哪儿得是以`/`结束即`/app/`
+
+  `COPY ["源文件", "目标文件"]`
+
+
+
++ ADD
+
+  用法与COPY差不多，
+
+  但是ADD的源文件地址可以是URL
+
+  ADD还可以传入压缩包，会自动解压
+
+
+
++ WORKDIR
+
+  设置应用的工作目录，之后所有的指令都会在里面执行
+
+
+
++ RUN
+
+  可以执行任何在终端上可以执行的指令
+
+
+
++ ENV
+
+  设置环境变量
+
+
+
++ EXPOSE
+
+  端口暴露，但是这个端口只是在容器上设置的，主机上还是找不到的。
+
+  主机上的端口并不会自动与容器上的端口匹配
+
+  这不会将端口在主机上publish
+
+  只是告知我们此容器会监听所设置的端口
+
+
+
++ USER
+
+  docker镜像构建，默认是使用root用户，权限太高，总是会有问题的。
+
+  一般会创建一个权限有限的系统用户。在这一层之后所有的都会是以这个用户权限构建的
+
+  一般和RUN一起用，使用RUN创建用户，然后USER指定所创建的用户
+
+  系统用户是不能用来登陆的
+
+  ```dockerfile
+  RUN addgroup app && adduser -S -G app appuser
+  USER appuser
+  ```
+
+
+
++ CMD
+
+  在容器启动时都会运行
+
+  和RUN的区别
+
+  + RUN是构建时生效，也就是在build的时候才会运行，运行的结果保存在镜像中
+
+  + CMD是运行时生效，在启动容器的时候生效，在docker run 之后加入的指令，可以覆盖掉CMD的指令
+
+  两种写法
+
+  + shell式：CMD npm start
+  + exec式：CMD ["npm", "start"]
+
+  exec式为推荐用法，因为shell式是在一个单独的shell中运行的。
+
+  此外，exec式只能解析一个指令，之后的都是该指令的参数
+
+  
+
++ ENTRYPOINT
+
+  作用和CMD一样，用法也一样
+
+  不同点是，CMD可以直接docker run之后加入指令直接覆盖
+
+  ENTRYPOINT则需要加上 --entrypoint 之后才能覆盖
+
+  一般如果希望程序以默认方式运行，则会将指令放入entrypoint中
+
+
+
++ 将第三方库排除以减少镜像的大小，加快构建镜像的速度
+
+  在Dockerfile一级新建`.dockerignore`目录，并在其中加入要排除的文件目录
+
+
+
++ 加速build
+
+  docker中的layer：image实际上是一系列layer的集合，
+
+  可以将这些layer理解成小的文件系统，它们只保存修改的文件
+
+  Dockerfile中的每一个指令，都会创建一个layer
+
+  在每次build的时候，docker都会复用上次build时候，没有改变的layer的缓存。
+
+  一般将稳定的layer放在顶部，易改变的layer放在底部，尽可能多的复用layer
+
+  一般将第三方库独立出来，单独COPY，因为第三方库一般都不会变
+
+
+
++ tag
+
+  docker在build的时候默认使用的是latest。
+
+  `docker image rm imagename`，如果一个id对应多个imagename和tag，那么删除imagename只是删除了这个name，不会删除该镜像
+
+  `docker tag imageid newtag`，给已有镜像打tag
+
+
+
++ sharing image
+
+  在dockerhub上创建仓库。要想push得上去，得要使用 `用户名/仓库名`的前缀的image才行
+
+  离线的方法
+
+  + 打包`docker image save -o react-app.tar react-app:3`，将镜像大包围tar文件
+  + 加载`docker image load -i filename`，从压缩包中加载，自动解压
 
 
 
@@ -365,4 +554,10 @@ groups 用户名
 在windows 中docker desktop failed initial，是因为配置文件出问题了。
 
 解决办法：将 `C:\Users\user\AppData\Roaming\Docker `的Docker文件删掉，然后再启动Docker desktop，让它自己生成一个就行
+
+
+
+#### 2 虚悬镜像清不掉
+
+因为还有依据该镜像构建的容器存在，因此得要先清除掉对应的容器，再清楚掉对应的镜像
 
