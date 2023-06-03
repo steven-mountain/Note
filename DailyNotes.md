@@ -171,3 +171,32 @@ import sys
 username = sys.argv[1]
 password = sys.argv[2]
 ```
+
+
+
+### Latex 更新
+
+首先下载安装 update-tlmgr-latest，即tlmgr
+
+tlmgr操作集合
+
+```powershell
+# 更换镜像
+tlmgr option repository https://mirrors.aliyun.com/CTAN/systems/texlive/tlnet
+
+# 安装宏包
+tlmgr install <packagename>
+
+# 移除
+tlmgr remove <packagename>
+
+#查看所有更新的宏包指令：
+tlmgr update --list
+
+#更新所有需要更新的宏包
+tlmgr update --self --all
+
+# 如果遇到更新宏包过程中，某一个宏包更新失败，可以使用指令继续更新：
+tlmgr update --reinstall-forcibly-removed --all
+```
+
