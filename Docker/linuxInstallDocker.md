@@ -148,3 +148,53 @@ apt purge docker-ce
 apt autoremove
 ```
 
+
+
+
+
+### docker中使用nvidia显卡 需要配置
+
+```bash
+# 设置包存储库和 GPG 密钥
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+# 下载安装 nvidia-docker2
+sudo apt-get update
+sudo apt-get install -y nvidia-docker2
+
+# 重启 Docker 守护进程并测试
+sudo systemctl restart docker
+sudo docker run --rm --gpus all nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi
+```
+
+
+
+### docker 修改镜像源
+
++ 创建或修改 /etc/docker/daemon.json 
+
+```json
+{
+    "registry-mirrors": [
+        "https://registry.hub.docker.com",
+        "http://hub-mirror.c.163.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "https://registry.docker-cn.com"
+    ]
+}
+```
+
++ 重启docker
+
+```bash
+systemctl restart docker
+```
+
++ 检查
+
+```ba
+docker info
