@@ -89,7 +89,7 @@ vim /etc/docker/daemon.json
 ```json
 {
     "registry-mirrors": [
-        “https://ung2thfc.mirror.aliyuncs.com ”,
+        "https://ung2thfc.mirror.aliyuncs.com ",
         "https://registry.docker-cn.com",
         "http://hub-mirror.c.163.com",
         "https://docker.mirrors.ustc.edu.cn"
