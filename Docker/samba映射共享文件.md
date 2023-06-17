@@ -27,16 +27,16 @@ samba映射共享文件
   
   -----
   # global 下添加
-  security = user
+  # security = user
   
   # 文末添加
   [share] # 暴露给外部的名称
   comment=share for users # 自定义描述
   path=/home/user/samba   # 共享目录
   browseable=yes          # 可浏览
-  available=yes           #
-  writable=yes            # 可写
-  public=no               # 公共
+  # available=yes           #
+  # writable=yes            # 可写
+  # public=no               # 公共
   read only = no			# 
   create mask = 0700		# 
   directory mask = 0700	# 只有所有者才可读写操作
@@ -57,6 +57,19 @@ samba映射共享文件
   /usr/sbin/ samba start
   /usr/sbin/ samba stop
   /usr/sbin/ samba restart
+  ```
+
+
+
+
++ 设置用户名及密码
+
+  ```bash
+  # 用户名、密码与系统的并不一样
+  sudo smbpasswd -a study
+  New SMB passwd:
+  Retype new SMB passwd:
+  Added user study.
   ```
 
   
