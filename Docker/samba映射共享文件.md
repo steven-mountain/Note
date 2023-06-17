@@ -30,13 +30,18 @@ samba映射共享文件
   security = user
   
   # 文末添加
-  [share]
+  [share] # 暴露给外部的名称
   comment=share for users # 自定义描述
   path=/home/user/samba   # 共享目录
   browseable=yes          # 可浏览
   available=yes           #
   writable=yes            # 可写
-  public=yes              # 公共
+  public=no               # 公共
+  read only = no			# 
+  create mask = 0700		# 
+  directory mask = 0700	# 只有所有者才可读写操作
+  valid users = study		# samba用户
+  force user = study		# 同上
   ```
 
 
