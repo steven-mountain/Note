@@ -321,7 +321,12 @@ git clean -fd # f强制清除,清除文件夹
 # 从工作区和staging中删除文件
 git rm file1.txt
 
-# 从仓库的commit中恢复文件
-
+# 从仓库的commit中恢复文件，从上一个版本中恢复
+git log # 获取历史commit
+git restore --source=HEAD~1 file1.txt # 从之前的版本中恢复文件
 ```
+
+
+
+#### Creating Snapshots Using VSCode/GitKraken
 
