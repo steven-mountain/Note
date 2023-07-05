@@ -321,7 +321,187 @@ git clean -fd # f强制清除,清除文件夹
 # 从工作区和staging中删除文件
 git rm file1.txt
 
-# 从仓库的commit中恢复文件
+# 从仓库的commit中恢复文件，从上一个版本中恢复
+git log # 获取历史commit
+git restore --source=HEAD~1 file1.txt # 从之前的版本中恢复文件
+```
+
+
+
+#### Creating Snapshots Using VSCode/GitKraken
+
+
+
+### 查看提交历史
+
+----
+
+#### 获取库
+
+Getting a Repository
+
+
+
+#### 检查历史记录
+
+Viewing the History
+
+```bash
+# 查看git历史记录
+git log
+
+# 查看每个提交里哪些文件被修改了
+git log --oneline --stat
+# 详情
+git log --stat 
+# 查看具体哪些地方被修改
+# patch：补丁，用来显示两个文件不同的地方
+git log --oneline --patch
+```
+
+
+
+#### 过滤历史记录
+
+Filtering the History
+
+```bash
+## 查看最近三个commit
+git log --oneline -3
+
+## 按照作者过滤
+git log --oneline --author="Mosh"
+
+## 按照日期过滤
+git log --oneline --before="2020-08-17"
+git log --oneline --after="2020-08-17"
+git log --oneline --after="yesterday"
+git log --oneline --after="one week ago" # two day ago/ one month ago
+
+## 按照message过滤
+# 大小写敏感
+git log --oneline --grep="GUI"
+
+## 按照内容过滤
+git log --oneline -S"OBJECT" # 所有添加或删除过OBJECT的commit
+# 查看具体修改
+git log --oneline -S"OBJECT" --patch
+
+## 查看某个区间里的commit
+git log --oneline fb0d184..edb3594 # 查看这两个ID之间包含这两者的commit
+
+## 按照文件过滤
+git log --oneline toc .txt
+# 如果文件和文件夹同名，需要指定文件
+git log --oneline -- toc .txt
+# 查看详情 --patch 必须在文件名之前
+git log --oneline --patch -- toc.txt
+```
+
+
+
+#### 格式化日志输出
+
+Formatting the Log Output
+
+```bash
+# author name
+git log --pretty=format:"hello %an" # %an author name
+
+# commit id
+git log --pretty=format:"%an commited %H" # %H hash, commit id, H显示全id
+git log --pretty=format:"%an commited %h" # h显示部分id
+
+# commit date
+git log --pretty=format:"%an commited %h on %cd" # cd commit date
+
+# color
+# %Cgreen 修改之后的颜色为绿色
+# %Creset 对之后的结果重置
+git log --pretty=format:"%Cgreen%an%Creset commited %h on %cd" 
+```
+
+
+
+#### 取别名
+
+Creating Aliases
+
+```bash
+# 给常用的指令取别名, alias.别名, 内部有双引号的变为单引号
+git config --global alias.lg "--pretty=format:'%Cgreen%an%Creset commited %h on %cd'"
+
+# 也可以在配置文件里加
+git config --global -e
+# 在 [alias]后面加
+
+# unstage, 恢复staging area中的内容
+git config --global alias.unstage "restore --staged ."
+```
+
+
+
+#### 查看commit
+
+viewing a commit
+
+```bash
+# 只想查看在某个commit中哪些文件被修改
+git show HEAD~2 --name-only
+
+# 查看在某个commit中的文件被增删改查
+git show HEAD~2 --name-status
+```
+
+
+
+#### 查看commit之间的改变
+
+Viewing the Changes Across Commits
+
+```bash
+# 查看前三个的change
+git diff HEAD~2 HEAD
+
+# 查看某一个文件的修改
+git diff HEAD~2 HEAD audience.txt
+
+# 只看文件名
+git diff HEAD~2 HEAD --name-only
+# 查看修改类型 
+git diff HEAD~2 HEAD --name-status
 
 ```
+
+
+
+#### 检查commit
+
+check out a commit
+
+```bash
+# 有时候想要查看在某一个时间的snapshot
+git checkout commitid
+
+# 一个 warning
+You are in 'detached Head' state.
+```
+
+git中的Master与Head一般指向最新的节点
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
