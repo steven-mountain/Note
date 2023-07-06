@@ -624,7 +624,7 @@ git commit -m "restore toc.txt"
 
 
 
-#### Blaming(找到谁犯的错)
+#### Blaming(查看哪些人修改了文件)
 
 ```bash
 # 查看哪些人对某个文件做了修改
@@ -679,4 +679,335 @@ GitLens
 
 ---
 
-### 分支管理（非常重要）
+### 分支管理
+
+分支允许我们从mainland中分叉出来一个，然后独立工作。相当于一个独立于主分支的workspace。
+
+MASTER(main)，尽可能保存稳定的版本。在不同分支之间切换时，git会将工作区设置为对应分支最新的snapshot。
+
+HEAD指向当前分支的commit。
+
+
+
+#### 使用branch
+
+```bash
+# 创建bugfix分支
+git branch bugfix
+# -C create
+git switch -C branch
+
+# 查看所有分支
+git branch
+
+# 切换分支 也可以checkout
+git switch bugfix
+
+# 重命名分支
+git branch -m bugfix bugfix/signup-form
+
+# 关于git log，会显示 HEAD及其之前的commit
+git log --oneline
+
+# 删除分支，在合并玩之后就可以删除掉这个分支了
+git branch -d bugfix/signup-form
+# 强制删除
+git branch -D bugfix/signup-form
+```
+
+
+
+#### 对比分支
+
+comparing branch
+
+```bash
+# 在merge分支之前，查看 master和当前分支 之间的commit
+git log master..bugfix/signup-form
+
+# 查看做了这些commit做了哪些修改
+git diff master..bugfix/signup-form
+
+# 对比bugfix/signup-form和当前所处分支
+git diff bugfix/signup-form
+
+# 查看哪些文件被修改
+git diff --name-only bugfix/signup-form
+git diff --name-status bugfix/signup-form
+```
+
+
+
+#### stashing（存储）
+
+适用场景：当你正在进行项目中某一部分的工作，里面的东西处于一个比较杂乱的状态，而你想转到其他分支上进行一些工作。问题是，你不想提交进行了一半的工作，否则以后你无法回到这个工作点。
+
+```bash
+# 保存当前的工作
+git stash push -m "message"
+
+# 但是stash不能保存新建的文件，因为它们是untracked
+echo hello > newfile.txt
+git stash push -a/--all -m "message"
+git stash push -am "message"
+
+# 查看stash
+git stash list
+
+# 查看stash里做了哪些更改
+git stash show 1/stash@{1}
+
+# 将stash应用（恢复到所属分支）
+git stash apply 1
+
+# 引用完之后就可以删除掉stash
+git stash drop 1
+# 清除所有stash
+git stash clear
+
+```
+
+
+
+#### 合并分支
+
+Merging，有两种merge的方法
+
++ Fast-forward merges
+
+  当master没有做修改的时候，只需要将master移动到最新分支即可
+
+  <img src="figure\fastforwardmerge.png" style="zoom: 33%;" />
+
+
+
+```bash
+# 查看带有分支信息的commit
+git log --oneline --all --graph
+
+# 将分支合并到master
+# 首先要切换到master分支
+git switch master
+git merge bugfix/signup-form
+
+# 有时候不希望使用fast-forward
+# 推荐这样用，因为这样可以使提交记录结构更清晰
+git merge --no-ff bugfix/signup-form
+
+# 有时候忘掉使用 --no-ff
+# 配置禁用fast-foward一劳永逸
+# 对当前用户所有仓库禁用ff
+git config --global ff no # 这会报错
+git config --global merge.ff no
+```
+
+
+
++ 3-way merges
+
+  当主分支master也有修改的时候，就需要3way，创建一个新的commit来合并这两个分支，3指的是初始分叉节点，和分叉之后的节点
+
+  <img src="figure\3waymerge.png" style="zoom: 25%;" />
+
+
+
+#### 查看合并的分支
+
+Viewing the Merged Branches
+
+```bash
+# 查看哪些分支被合并的，哪些没有
+# 首先切换到master分支
+# 查看哪些分支合并到了当前分支
+git branch --merged
+# 没有合并的
+git branch --no-merged
+```
+
+
+
+#### 合并冲突
+
+mergeing conflicts
+
+```bash
+# 不同的branch对同一个文件做了不同的更改时，会出现冲突
+# 此时merge，会卡在merge的中间状态
+git merge branch1
+git status
+
+# 打开有冲突的文件
+open confictfile
+# 会有如下的信息
+<<<<<<< HEAD # HEAD 指向当前所在分支，手动合并删除此行
+Change in mater branch # 当前分支中的变化
+======= # 分隔符，手动合并，删除此行
+Change in conflic branch # 要合并分支中的变化
+>>>>>>> conflict #要合并的分支，手动合并删除此行
+# 在冲突文件中，不应该再加入出冲突内容之外加入新的内容，方便之后查看
+
+# 处理完之后将此文件添加到staging area中
+git add conflictfile
+git commit # 使用默认信息
+
+```
+
+
+
+#### 冲突处理工具
+
++ Kdiff
++ P4Merge
++ WinMerge(Windows Only)
+
+```bash
+# 配置冲突处理工具，P4Merge
+git config --global merge.tool p4merge
+git config --global mergetool.p4merge.path "路径"
+# 在遇到冲突时使用
+git mergetool
+```
+
+
+
+#### Aborting merge
+
+处理冲突的时候用，如果你不太确定能处理这些冲突的时候，那就打断施法。退出合并，不处理
+
+```bash
+# 打断merge，回到merge之前的状态
+git merge --abort
+```
+
+
+
+#### Undoing a Faulty Merge
+
+回滚merge，当merge出现问题时，回到merge之前的状态，
+
+```bash
+# rewrite the history，删除掉当前的commit，修改时间线相当于是，需要特别注意
+# 修改时间线，在本地可以这么做，但是多人协同，这么做就不好了
+# 回退merge
+# soft，只是改变head指向上一个snapshot
+# mixed，同上，并且将新的snapshot指向staging area
+# hard，同上，并将staging area中的东西放入working dir
+git reset --hard HEAD~1 # 将当前分支回退到上一个状态
+
+# 上面回退的commit依然存在，可以通过id恢复
+git reset commitId
+
+# 回滚 revert
+# 并不会删除当前commit，而是在当前分支之后创建新的commit，用这个commit恢复之前的状态
+# 推荐使用
+git revert -m 1 HEAD
+# -m 指定前面的第几个commit，这里是第一个
+# HEAD 回滚的目标节点
+```
+
+
+
+#### Squash Merging
+
+因为如果merge那么被merge的分支commit会成为master的一部分。
+
+但是有些分支上的commit我们并不想让他们并入主分支。这时候就用squash merge
+
+<img src=".\figure\squashmerge1.png" style="zoom:33%;" />
+
+
+
+相当于是将bugfix分支所做的左右修改合成一个commit并入master，但是又不是真的merge。
+
+因为这个新的commit只有一个父分支。
+
+<img src=".\figure\squashmerge2.png" style="zoom:33%;" />
+
+squash之后的分支
+
+<img src=".\figure\squashmerge3.png" style="zoom:33%;" />
+
+那些短时间内需要使用feature或者bugfix的时候使用squash很有效
+
+```bash
+# 并不是真正的merge 
+git merge --squash bugfix/photo-upload
+
+# squash merge之后，所有bugfix上的修改会写入master的staging area中
+# 需要commit才会创建新的节点
+git commit
+
+# git branch --merged，是不会显示被squash merge的分支
+# 也就是说这个分支是unmerged的状态，
+# git branch --no-merged
+# 直接删除 -d 会报错，需要强制删除 -D
+```
+
+
+
+#### Rebasing
+
+会改写时间线，只能是本地自己使用的时候用。
+
+开始状态
+
+<img src="figure\rebase1.png" style="zoom:33%;" />
+
+rebase改变了当前分支的base commit
+
+<img src="figure\rebase2.png" style="zoom:33%;" />
+
+这里就改变了主分支的时间线。所以一般是子分支rebase主分支。
+
+<img src="figure\rebase3.png" style="zoom:33%;" />
+
+```bash
+# 进入分支
+git switch branch1
+# 做一些修改，然后add commit
+
+# 回到master
+# 也做一些修改
+git switch master
+
+# 再次回到分支
+git switch branch1
+# 以master分支最新的commit的基础，修正branch1
+git rebase master
+
+# 处理rebase中的冲突
+# git mergetool 或者打开冲突的文件，处理冲突
+git rebase --continue # 继续rebase
+git rebase --skip # 跳过当前commit，移动到下一个commit
+git rebase --abort # 终止rebase
+```
+
+
+
+#### cherry picking
+
+将子分支前面的commit加入到master中，但是不merge
+
+<img src="figure\cherrypick.png" style="zoom:33%;" />
+
+```bash
+git cherry-pick commitid
+```
+
+
+
+#### picking files from another branch
+
+将其他分支的文件，加入到当前分支的工作区
+
+```bash
+git restore --source=featrue/send-email -- toc.txt
+# -- toc.txt 指定为文件
+# 将文件加入到当前分支的工作区
+```
+
+
+
+#### vscode中的如何使用分支
+
+略
