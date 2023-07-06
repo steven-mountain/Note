@@ -7,6 +7,7 @@
 + 可以回溯
 + 可以多人协同
 + 中心化和分布式
++ Global Information Tracker（git）
 
 #### 如何使用git
 
@@ -57,6 +58,8 @@ git config --global core.autocrlf input
 ```
 
 
+
+---
 
 ### 创建快照
 
@@ -332,9 +335,9 @@ git restore --source=HEAD~1 file1.txt # 从之前的版本中恢复文件
 
 
 
-### 查看提交历史
+---
 
-----
+### 查看提交历史
 
 #### 获取库
 
@@ -354,6 +357,7 @@ git log
 git log --oneline --stat
 # 详情
 git log --stat 
+
 # 查看具体哪些地方被修改
 # patch：补丁，用来显示两个文件不同的地方
 git log --oneline --patch
@@ -489,19 +493,190 @@ You are in 'detached Head' state.
 
 git中的Master与Head一般指向最新的节点
 
+<img src=".\figure\detach11.png" style="zoom:50%;" />
+
+
+
+`git checkout commitid`，head 跳转到对应commitid的节点
+
+<img src="figure\detach2.png" style="zoom:50%;" />
+
+
+
+而此时如果commit的话，会在这之后新创建一个节点
+
+<img src="figure\detach3.png" style="zoom:50%;" />
+
+
+
+当head回到master节点，之前先创建的节点便无法访问
+
+<img src="figure\detach4.png" style="zoom:50%;" />
+
+因此`git checkout commitid`或者说处在`detached head`状态，都只能查看，不能新建分支节点
+
+```bash
+# HEAD跳转到某一commit，工作区就会变更为这一commit的snapshot
+git checkout commitid
+
+# 查看HEAD及之前的commit
+git log --oneline
+
+# 查看所有commit
+git log --oneline --all
+
+# 回到master
+git checkout master
+```
+
+
+
+#### 通过二分查找找bug
+
+Finding Bugs Using Bisect
+
+```bash
+# 通过bisect找bug
+# 需要设定一个 good 和 bad commit
+# 开始
+git bisect
+
+# 将最新的也就是master设定为bad（因为这儿有问题）
+git bisect bad
+
+# 设定一个good commit，这里将第一个commit设定为good
+git log --oneline
+git bisect good firstCommitID
+# 此时的head指向good和bad中间的节点
+# 运行程序，看问题是否存在，如果存在name 设为bad否为good
+# 查到追踪的结果
+git bisect bad
+
+# 退出
+git bisect reset
+```
+
+
+
+#### 通过shortlog查找贡献者
+
+Finding Contributors Using Shortlog
+
+```bash
+# 找出对项目做出贡献的人
+git shortlog
+
+# 根据每一个贡献者的提交数排序
+git shortlog -n/ --numbered
+
+# 只显示数量
+git shortlog -s/ --summary
+
+# 显示每一个contributor的email
+git shortlog -e
+
+# 可以组合
+git shortlog -nse
+
+# 在某一时间的贡献
+git shortlog -nse --before="" --after=""
+```
+
+
+
+#### 查看某一文件的历史记录
+
+```bash
+# 查看某一文件的历史记录
+git log toc.txt
+
+# 简述
+git log --oneline toc.txt
+
+# 每一个commit中该文件的状态
+git log --oneline --stat toc.txt
+
+# 每一个commit对该文件所做的修改
+git log --oneline --patch toc.txt
+```
+
+
+
+#### 恢复一个被删除的文件
+
+Restoring a Deleted File
+
+```bash
+# 从历史记录中恢复一个文件
+# 删除一个文件并提交
+git rm toc.txt
+git commit -m "Remove toc.txt"
+
+# 查看该文件的历史记录
+git log toc.txt
+# 从文件被删节点的父节点 中 恢复被删文件
+# !!!注意这里没有跳转，并且恢复的文件就自动在staging area里了
+git checkout parentID toc.txt
+
+# 提交结果
+git commit -m "restore toc.txt"
+```
+
+
+
+#### Blaming(找到谁犯的错)
+
+```bash
+# 查看哪些人对某个文件做了修改
+git blame audience.txt
+
+# 带上邮箱
+git blame -e audience.txt
+
+# 只想查看前三个
+git blame -e -L 1,3 audience.txt
+
+```
+
+
+
+#### Tagging
+
+有时候想要对特定的历史提交做标记
+
+```bash
+# 给某一个commit打上标记
+git tag v1.0 commitid
+
+# 跳转到某一id
+git checkout v1.0 # tag等同于id这里
+
+# 查看所有的tag
+git tag
+
+# 自定义tag
+# -a alternate
+# 这里是给目前所指向的节点打tag
+git tag -a v1.1 -m "alternate tag 1.1"
+
+# 查看tag以及其message
+# 如果没有指定message，那么默认就是commit的messsage
+git tag -n
+
+# 删除tag
+git tag -d v1.1
+```
+
+
+
+#### 使用vscode查看历史记录
+
+GitLens
 
 
 
 
 
+---
 
-
-
-
-
-
-
-
-
-
-
+### 分支管理（非常重要）
