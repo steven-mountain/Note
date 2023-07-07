@@ -843,7 +843,7 @@ open confictfile
 Change in mater branch # 当前分支中的变化
 ======= # 分隔符，手动合并，删除此行
 Change in conflic branch # 要合并分支中的变化
->>>>>>> conflict #要合并的分支，手动合并删除此行
+>>>>>>> conflict # 要合并的分支，手动合并删除此行
 # 在冲突文件中，不应该再加入出冲突内容之外加入新的内容，方便之后查看
 
 # 处理完之后将此文件添加到staging area中
@@ -1011,3 +1011,475 @@ git restore --source=featrue/send-email -- toc.txt
 #### vscode中的如何使用分支
 
 略
+
+
+
+### github master --> main
+
+```bash
+# 克隆一份仓库到本地
+git clone xxx.git
+
+# 创建并推送main分支
+git checkout -b main
+git push origin main
+
+# 在github中修改默认分支
+# settings -》 branches -》 master
+
+# 删除master
+# 删除本地master
+git branch -d master
+# 删除远程分支，由于源对象被省略，所以就是删除
+git push origin :master
+
+# 补充push格式
+git push <repository> <refspec>
+refspec -> <src>:<dst>
+src：是源对象，通常是要推送的分支的名称
+dst：是目标引用，指定了远程仓库要更新的引用。
+# 将本地推送到master
+git push origin master:master
+# 简写 git push origin master
+
+```
+
+
+
+
+
+### 多人协作
+
+#### 创建仓库
+
+
+
+#### 添加协作者
+
+settings -》manage access -》invite a collaborator
+
+用户接收邀请之后就可以push这个仓库了
+
+
+
+#### 克隆仓库
+
+```bash
+# 会在本地创建一个和xxx同名的文件
+git clone xxx.git
+
+# 不和xxx.git同名？
+git clone xxx.git newName
+
+# git log --oneline --all -graph
+86d4542 (HEAD -> main, origin/main, origin/HEAD) Initial commit
+# 每当我们克隆一个仓库，git会给原仓库（这里是在github上）赋名为origin
+# origin/main 说明在原仓库里 main所在的位置，remote tracking branch。因为本地是无法操作这个branch的
+# origin/HEAD 说明在源仓库（这里是github上），HEAD所在的位置
+
+# 列出remote repositories
+git remote
+# remote repository 的详细信息
+git remote -v # verbose 
+# 说明我们是在和哪个远程仓库建立的连接
+origin  https://github.com/balsh/MARS.git (fetch) 
+origin  https://github.com/blah/MARS.git (push)
+```
+
+
+
+#### Fetching
+
+从远程仓库拉去最新内容到本地，但是不合并，新的内容在origin/main分支上，需要自己手动merge
+
+<img src="figure\gitfetch1.png" style="zoom: 25%;" />
+
+```bash
+# 拉去远程仓库的更新，如果不填，即拉去所有的commit
+git fetch origin 
+# 指定拉去哪一个branch的commit
+git fetch origin branch
+
+# 如果删掉origin，git会猜测你从origin拉取，默认origin
+git fetch
+
+# git fetch之后，origin/main, origin/HEAD会移动到新的commit上
+# 而本地的branch保持不变
+1d7f1fd (origin/main, origin/HEAD) Update README.md
+86d4542 (HEAD -> main) Initial commit
+
+# 显示本地和远程仓库的不同
+git branch -vv
+main 86d4542 [origin/main: behind 1] Initial commit
+
+# 合并刚刚拉取的内容,这里会ff merge，但是如果你禁用，那么就是3way
+# 3way 会创建新的分支，这样local就领先于origin
+git merge origin/main
+```
+
+
+
+#### Pulling
+
+将远程仓库的变化拉取到本地，fetch + merge；pull = fetch + merge
+
+初始时本地和远程仓库都有change
+
+<img src="figure\pull1.png" style="zoom: 25%;" />
+
+`git pull`，会将`C`的内容下载下来，并将 origin/main指向`C`
+
+<img src="figure\pull2.png" style="zoom: 25%;" />
+
+之后会自动merge，这里也就是3way的方式
+
+<img src="figure\pull3.png" style="zoom: 25%;" />
+
+当然这样会pollute history，因此也就出现了 git pull -rebase的方式，这样做会使history更干净
+
+<img src="figure\pull4.png" style="zoom: 25%;" />
+
+<img src="figure\pull5.png" style="zoom: 25%;" />
+
+
+
+#### Pushing
+
+将本地的同步到origin
+
+```bash
+# 当前在main提交到origin的main
+git push origin main
+# 也可以省略
+git push
+
+# 需要登陆你的github账号，并且这个仓库不是你的，你得是collaborator才行
+```
+
+
+
+有时候push会被reject，因为有人提交了更新的commit，git防止你覆盖掉其他的所做的commit
+
+可以使用git push -f，但是这是个terrible choice，这会将别人的commit D给删掉，用你的C去替换它
+
+<img src="figure\push1.png" style="zoom: 25%;" />
+
+正确的做法应该是将origin的更新拉取下来，merge之后再提交
+
+<img src="figure\push1.png" style="zoom: 25%;" />
+
+
+
+#### Storing Credentials
+
+credential 凭证，有几种模式：
+
+- 默认所有都不缓存。 每一次连接都会询问你的用户名和密码。
+- “cache” 模式会将凭证存放在内存中一段时间。 密码永远不会被存储在磁盘中，并且在15分钟后从内存中清除。
+- “store” 模式会将凭证用明文的形式存放在磁盘中，并且永不过期。 这意味着除非你修改了你在 Git 服务器上的密码，否则你永远不需要再次输入你的凭证信息。 这种方式的缺点是你的密码是用明文的方式存放在你的 home 目录下。
+- 如果你使用的是 Mac，Git 还有一种 “osxkeychain” 模式，它会将凭证缓存到你系统用户的钥匙串中。 这种方式将凭证存放在磁盘中，并且永不过期，但是是被加密的，这种加密方式与存放 HTTPS 凭证以及 Safari 的自动填写是相同的。
+- 如果你使用的是 Windows，你可以安装一个叫做 “Git Credential Manager for Windows” 的辅助工具。 这和上面说的 “osxkeychain” 十分类似，但是是使用 Windows Credential Store 来控制敏感信息。 可以在 https://github.com/Microsoft/Git-Credential-Manager-for-Windows 下载。
+
+```bash
+# 在本地存储远程github账号，这样不用每次提交都要输账号和密码
+# macos 
+# 首先检查是否安装了osxkeychain
+git credential-osxkeychain
+# 启用keychain
+git config --global credential.helper osxkeychain
+
+# windows
+# 需要安装 Git-Credential-Manager-for-Windows 
+```
+
+
+
+PS：更新一下
+
+2021.8.13起，Github要求使用基于令牌的身份验证 - 前端历劫之路的文章 - 知乎 https://zhuanlan.zhihu.com/p/401978754
+
++ 在头像settings -->Developer settings --> Personal access tokens --> Generate new token
+
++ 需要设置的选项：
+
+  - Note
+    + 验证token的标题（别名），你可以起一个好记的名称。
+
+  - Expiration
+    + 验证token有效期限（必填项）。默认30天。
+
+  - Select scopes
+    + 选择要授予此令牌token的范围或权限。 要使用token从命令行访问仓库，请选择repo。 要使用token从命令行删除仓库，请选择delete_repo。 其他根据需要进行勾选。
+
++ 生成好的token记得保存，因为刷新网页之后就无法再看到它了
+
+
+
++ 使用的两种方式：
+
+  + 在push的时候输入密码的地方输入token就可以了，如果没有那就
+
+    ```bash
+    git config --system --unset credential.helper
+    ```
+
+  + 将token添加进远程仓库链接中，避免同一个仓库每次提交都要输入token
+
+    ```bash
+    git remote set-url origin https://<your_token>@github.com/<USERNAME>/<REPO>.git
+    
+    git remote set-url origin https://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@github.com/steven-mountain/MARS.git
+    ```
+
+    + <your_token>：生成的token
+    + \<USERNAME\>：用户名，这里应该也不是用户名，是仓库所有者的名称
+    + \<REPO>：仓库名
+
+
+
+#### Sharing Tags
+
+默认情况下，git不会将本地tag传输到remote上去。
+
+```bash
+# 将本地tag传到remote上去
+git tag v1.0 commitid
+# v1.0得是本地已有的tag，并且对应commit在remote上也有
+git push origin v1.0
+
+# 删掉remote上的tag，但是这个tag依然在本地
+git push origin --delete v1.0
+# 删除本地tag
+git tag -d v1.0
+```
+
+
+
+#### Releases（github）
+
+在github上添加带有软件的tag，也就是release。只需要在tag旁边选择release，然后将设置并将程序拖拽进去即可。应该是基于某个tag发布release。
+
+这不是git的特性，这是github的功能。
+
+
+
+#### Sharing branches
+
+默认branches是private or local的，也可以将这些branch push到remote上去，如果需要的话。
+
+如果直接push的话，会有问题的，因为本地branch没有与remote上的branch建立连接。
+
+```bash
+# 查看所有remote tracking branch
+git branch -r
+
+# 将本地branch 与 remote建立连接， -u upstream
+git push -u origin branchname
+
+# 直接push 加branchname会自动在remote创建一个branch
+git push origin branchname
+
+# 当工作完成后删除掉remote branch
+# 本地的该branch依然存在
+git push -d origin branchname
+
+# 删除本地branch
+git branch -d branchname
+```
+
+
+
+#### Collaboration Workflow
+
+```bash
+# 直接在github上创建分支，git fetch 会将该分支拉取到本地
+git fetch 
+
+# 但是git branch看不到这个新获取的分支
+# git branch -r 可以查看到该新分支
+# 这只是个remote tracking branch，就如 origin/main一样本地无法操作
+
+# 创建一个本地的branch，将它和remote tracking branch相映射
+git switch -C remoteNewBranchName origin/remoteNewBranchName
+
+# 删除掉remote上不存在但是本地仍然关联的branch
+# 因为某个branch虽然在remote上已经被删掉了
+# 但是本地 git branch -r 依旧存在
+git remote prune origin
+```
+
+CollaboratorA:
+
+```bash
+# 首先拉取remote repo
+git fetch
+
+# 如果有origin/newbranch， 本地没有则需要创建并关联
+git switch -C NewBranch origin/NewBranch
+
+# 这时B 拉取了repo
+# 再在这个branch上做修改并提交
+# DO SOME CHANGE
+# 将branch上的result merge到main
+git add .
+git push
+git switch main
+git merge NewBranch
+git push
+
+# 完成之后删掉remote和local的branch
+git push -d origin NewBranch
+git branch -d NewBranch
+
+# 自此A完成了对NewBranch的操作，并将结果merge到了main中
+```
+
+
+
+CollaboratorB:
+
+```bash
+# 在上述时刻拉取了repo
+git fetch
+
+# 当A完成修改之后并push之后，B需要同步最新的repo到本地
+# 首先切换到main
+git switch main
+# 拉取更新后的main
+git pull
+
+# 删除掉本地的NewBranch（因为A已经在remote上删除了它）
+git branch -d NewBranch
+# git branch -r
+# 此时B上依然存在remote tracking branch：origin/NewBranch
+# 但是remote上已经没有这个分支了，
+git remote prune origin
+
+# 自此B完成了修改
+```
+
+
+
+#### Pull Requests
+
+正常流程
+
+```bash
+## LOCAL
+# fetch repo
+# 新建了一个分支，并在该分支上做出了修改并进行了提交
+git switch -C NewBranch
+# do some change
+git add .
+git commit -m "message"
+# push the branch to remote
+git push -u origin NewBranch
+
+## remote(github)
+# 会出现pull request
+# 将NewBranch merge 到main
+# 先review
+# 选择pull request，然后选择reviewer B
+# B 做出comment，如果reviewer都觉得可以了
+
+# 再merge，这里merge的人根据依具体情况而定
+```
+
+冲突处理：
+
+如果pull request的时候遇到冲突，有两种方式：
+
++ 命令行，管理者fetch repo，并处理冲突，再重新commit然后删掉newbranch
+
++ 在gihub上处理冲突，有个问题那就是github上好像冲突标记是反着的
+
+  ```bash
+  <<<<<<< newBranch # 要合并的
+  newBranch
+  =======
+  mainBranch
+  >>>>>>> main # 合并到
+  ```
+
+  
+
+
+
+#### Github issues
+
+相当于一个针对某个仓库的贴吧
+
+
+
+#### Github Labels
+
+在label中可以看到有哪些issues
+
+
+
+#### Github Milestones
+
+当项目达到了达到了某个预期的目标的时候使用，也是issue里的
+
+
+
+#### 开源项目（fork）
+
+Contributing to an Open-Source Project
+
+对于一个开源的项目，想push但是你没有权限，这时候就要用到Fork了
+
+Fork会将被fork的项目复制一份到你的账户上，当然你肯定对这个fork的项目有完全的控制权
+
+工作流：
+
+```bash
+# 首先fork一份到自己账号上
+# 将该代码clone到本地
+git clone xxx.git
+
+# 进入项目做些更改
+git switch -C newBranch
+# Do some change
+git add .
+git commit -m "message"
+
+# push 到remote
+git push -u origin newBranch
+
+# github上pull request不同的地方就在于有了base repo就是被fork的，和你fork的repo
+# 但是你的pull request，你不能merge full request，只有开源项目的维护者可以merge
+# 项目的维护者可以看到你的提交
+```
+
+
+
+#### keeping a fork up to date
+
+fork的repo不会随着base repo的更新而更新。
+
+<img src="figure\forksync.png" style="zoom: 33%;" />
+
+解决办法是，将local repo和base repo相关联，然后pull base repo并push 到fork repo
+
+<img src="figure\forksync2.png" style="zoom: 33%;" />
+
+<img src="figure\forksync3.png" style="zoom: 33%;" />
+
+```bash
+# 通过git remote管理远程仓库
+# 显示关联的远程仓库
+git remote
+
+# 关联其他远程仓库
+git remote add remoteRepoName urlOfRemoteRepo
+# remoteRepoName: 这个是自己取的，一般是upstream
+# urlOfRemoteRepo 新的远程仓库的地址
+
+# 重命名连接
+git remote rename upstream base
+
+# 删除远程连接 url
+
+```
+
