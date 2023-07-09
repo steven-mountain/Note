@@ -1231,7 +1231,7 @@ PS：更新一下
     ```bash
     git remote set-url origin https://<your_token>@github.com/<USERNAME>/<REPO>.git
     
-    git remote set-url origin https://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@github.com/steven-mountain/MARS.git
+    git remote set-url origin https://repocode@github.com/steven-mountain/MARS.git
     ```
 
     + <your_token>：生成的token
@@ -1794,7 +1794,7 @@ ddf3b81 toc.txt changed
 git reflog
 
 # 回退到之前得的状态，commitid都不变的，真是之前的状态
-git reset Commitid
+git reset --hard Commitid
 ```
 
 
