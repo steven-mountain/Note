@@ -313,7 +313,10 @@ git restore file1.txt
 # 但是对于新建的文件不生效，因为staging就没有新建的文件，
 # 没有跟踪（untracked）也就无从谈起恢复
 git clean # 清除掉所有untracked的文件，默认拒绝，因为无从恢复
-git clean -fd # f强制清除,清除文件夹
+git clean -fd # f强制清除,-d清除未被添加到git路径中的文件
+
+# 这里清除的是工作区的文件
+# 未被添加到git路径的意思就是没有git add，也就是untracking file
 ```
 
 
@@ -1482,3 +1485,343 @@ git remote rename upstream base
 # 删除远程连接 url
 git remote rm base
 ```
+
+
+
+### 修改历史
+
+Rewriting History
+
+#### 为什么要Rewriting History
+
++ Poor commit message
+  + reword commit messages
++ Large commits
+  + split large commits
++ Small commits
+  + squash smal, related commits
++ Made commits by accident
+  + Drop unwanted commits
++ modify content of commits
++ Clean and readble hsitory
+
+
+
+#### Golden Rule of Rewriting History
+
+Don't rewirete public hisory
+
+
+
+#### Undoing commits
+
+```bash
+# git rest
+# soft 撤销commit, head 回滚，相当于将已提交状态改为未提交状态
+# mixed 默认的方式，head 回滚，并将snapshot放入staging area，相当于将提交commit改为未加入staging area
+# hard 回滚工作区，相当于没有在工作区做出修改
+```
+
+
+
+#### Reverting Commits
+
+```bash
+# 可以按照范围 revert
+# 将前三个都revert,左开右闭，
+# HEAD-->HEAD~1
+# HEAD~1-->HEAD~2,
+# HEAD~2-->HEAD~3,
+
+git revert HEAD~3..HEAD
+# 但是这样创建了三个commit，会扰乱commit history
+# 解决办法，将这三次revert 撤销他们的change，并将它们加入到staging area中
+git revert --no-commit HEAD~3..HEAD
+git revert --no-commit HEAD~3..
+
+# 终止revert
+git revert --abort
+# 对内容的修改回滚完之后，continue提交修改
+git revert --continue
+```
+
+
+
+#### 	Recovering Lost Commits
+
+```bash
+# 有时候不小心reset，把之前的提交弄没了
+git reset --hard HEAD~6
+
+# 这些被删掉的commit会存在一段时间，如果一直没用，就会被GC
+# 显示当前仓库引用的历史记录，会显示所有的完整记录，包括被删除的提交，用于恢复提交或分支
+git reflog
+git reset --hard HEAD@{1}
+# 这会恢复所有前面被删除的commit
+
+# 查看固定分支（branch）的历史记录
+git reflog show feature
+```
+
+
+
+#### Amending(修订，改良) the last commit
+
+如果在最近的一次提交中犯错了，想要修改最近的一次提交
+
+```bash
+# 错误的修改
+echo bad >> file1.txt
+git add .
+git commit -m "bad"
+
+# 修正错误
+echo good >> file1.txt
+git add .
+git commit --amend -m "good"
+
+# 如果多添加了文件
+# 可以reset，然后git clean -fd,将多添加的文件去掉，然后commit
+# git clean 清除的是工作区的文件，因此需要git add . 再git commit
+```
+
+
+
+#### Amending an Earlier Commit
+
+```bash
+# 修订早先的commit
+# 先查看所要amend commit 的 id
+git log --oneline
+92e0f27 (HEAD -> master) new change
+4ee7f6b Merge branch 'conflict'
+e35a2bf toc.txt changed
+0df5a53 (conflict) toc.txt changed
+6739eff rerestore toc.txt
+1d37e9b redelete toc.txt
+cfec162 restore toc.txt
+b715835 remove toc.txt # 假定我们需要修订此commit
+a642e12 Add header to all pages. # 那么我们需要rebase的commitid应该是这个
+
+# 使用交互模式的rebase
+# rebase 变基操作，因为更改了之前的commit，这里的id是要更改commitid的父id
+git rebase -i a642e12
+# 会打开编辑器，内有例如下面的内容
+pick b715835 remove toc.txt # 你需要修改的commit，有很多命令，这里用edit
+pick cfec162 restore toc.txt
+pick 1d37e9b redelete toc.txt
+pick 6739eff rerestore toc.txt
+pick e35a2bf toc.txt changed
+pick 0df5a53 toc.txt changed
+pick 92e0f27 new change # 最新的commit，HEAD所指的位置
+
+# 要修改的commit，将命令从pick修改为edit
+# git 会创建一个新的commit，并且之后的commit都会改变，因此rebase是一个结构破坏型的操作
+edit b715835 remove toc.txt
+
+# 退出编辑器就可以修改目标commit了
+Stopped at b715835...  remove toc.txt
+You can amend the commit now, with
+
+  git commit --amend
+
+Once you are satisfied with your changes, run
+
+  git rebase --continue
+  
+# 做一些修正，例如添加文件
+echo newfile > newfile.txt
+
+# 添加提交修改
+git add .
+git commit --amend n # 这里使用默认的message，如果需要，可以自己修改commit message
+# git 会修改 所修正的commit及其之后的所有commit
+
+# 继续rebase，之后原来的那些commit会被丢弃
+git rebase --continue
+# 这里面如果有冲突就得要自己去处理冲突
+# 可以看到修改之后的记录message没有变化，但是a642e12之后的commitid都变了
+d4ae8df (HEAD -> master) new change
+c2e9c33 toc.txt changed
+e6cc604 rerestore toc.txt
+a5c183e redelete toc.txt
+fdcfe3c restore toc.txt
+f64ede5 remove toc.txt
+a642e12 Add header to all pages.
+```
+
+<img src="figure\earlierAmend1.png" style="zoom: 50%;" />
+
+<img src="figure\earlierAmend2.png" style="zoom: 50%;" />
+
+
+
+#### Droping A commit
+
+```bash
+# 一样也是查找所要删除的commitid
+git log --oneline
+
+d4ae8df (HEAD -> master) new change
+c2e9c33 toc.txt changed
+e6cc604 rerestore toc.txt
+a5c183e redelete toc.txt
+fdcfe3c restore toc.txt # 我们想要删除的commit
+f64ede5 remove toc.txt # 从parentcommitid开始
+
+# rebase parentCommitId
+git rebase -i f64ede5
+# 或者 commitid~1, commitid^这些都指定父commitid
+git rebase -i fdcfe3c~1/ fdcfe3c^
+
+# 在编辑器里会出现如下的内容
+pick fdcfe3c restore toc.txt # 所要修改的
+pick a5c183e redelete toc.txt
+pick e6cc604 rerestore toc.txt
+pick c2e9c33 toc.txt changed
+pick d4ae8df new change
+
+# 可以将pick改为drop，或者删除掉那一行
+pick fdcfe3c restore toc.txt -> drop fdcfe3c restore toc.txt # or
+pick fdcfe3c restore toc.txt -> 
+
+# 之后如果有冲突就处理冲突
+# 然后继续，这会将当前的修改并入到后一个commit中
+git rebase --continue
+
+# 修改之后的log，少了drop的那个commit，同时之后的所有commitid都变了
+a0f578b (HEAD -> master) new change
+525dac5 toc.txt changed
+13a0d7f rerestore toc.txt
+f64ede5 remove toc.txt
+
+# 需要drop多个呢
+git rebase -i HEAD~3
+```
+
+
+
+#### Rewording Commit Messages
+
+```bash
+# 找到需要修改message的commitid
+git log --oneline
+
+# rebase 其parent commit
+git rebase -i commitid^
+git rebase -i parentCommitid
+
+# 将pick改为reword，关闭编辑器
+# 然后依次修改，所要修改的commit message
+# 如果没有问题就直接成功了，就不需要 git rebase --continue
+# 同样的，修改的commit及其之后的所有commit都是新建的，它们的commitid与之前的id已经不同了
+```
+
+
+
+#### Re-ordering Commits
+
+调整commits之间的顺序
+
+```bash
+# 需要修改区间的前一个id
+git log --oneline
+a0f578b (HEAD -> master) new change
+525dac5 toc.txt changed # 想要修改的区间尾部
+13a0d7f rerestore toc.txt
+f64ede5 remove toc.txt
+a642e12 Add header to all pages. # 区间头部
+50db987 Include the first section in TOC. # 区间的parent id
+
+# rebase
+git rebase -i 50db987 
+# 修改commit之间的顺序
+pick a642e12 Add header to all pages.
+pick f64ede5 remove toc.txt
+pick 13a0d7f rerestore toc.txt
+pick 525dac5 toc.txt changed
+pick a0f578b new change
+
+# 如果有冲突处理冲突 然后再git rebase --continue，可以看到log history的历史记录已经改变了
+# 因为中间处理了冲突，所以多了两个commit
+f3e33d6 (HEAD -> master) new change
+07fc20f resolve conflic # 冲突处理的commit
+b32eeb2 change commit order # 同样也是冲突处理的commit
+ac389c7 Add header to all pages.
+ddf3b81 toc.txt changed
+50db987 Include the first section in TOC.
+```
+
+
+
+#### Squashing Commits
+
+有时候需要将历史提交记录中的多个commit合并为1个commit
+
+```bash
+# 查找要合并区间的父id
+git log --oneline
+f3e33d6 (HEAD -> master) new change
+07fc20f resolve conflic # 要合并的
+b32eeb2 change commit order # 这个也是
+ac389c7 Add header to all pages. # 合并到这个commit
+ddf3b81 toc.txt changed # 区间父id
+
+# rebase -i
+git rebase -i ddf3b81
+pick ac389c7 Add header to all pages. 
+pick b32eeb2 change commit order 
+# 将pick改为squash，合并到前一个commit，
+# 除了squash，也可以是fixup
+# 不同点是 fixup会只保留合并到目标commit的message，没有修改message的机会。直接完成
+pick 07fc20f resolve conflic # 同样的
+pick f3e33d6 new change
+# 将pick 修改为squash之后会将该commit合并到前一个commit
+
+# 然后就是填写commit message
+# 之后就顺利的squash，squash之后的log，可以看到中间的两个commit已经被合并了，而且从父id之后的所有commit id都变了
+445dbad (HEAD -> master) new change
+bd720f1 Add header to all pages.
+ddf3b81 toc.txt changed
+```
+
+
+
+#### 回到rewrite history之前的状态
+
+```bash
+# 查找之前的状态
+git reflog
+
+# 回退到之前得的状态，commitid都不变的，真是之前的状态
+git reset Commitid
+```
+
+
+
+#### Spliting  a commit
+
+```bash
+# 找到要split 的commit id
+git log --oneline
+
+# git rebase
+# rebase之后 HEAD 指向的是commitid所对应的那个commit
+git rebase -i commitid^ # or parentCommitid
+# 将pick 改为edit
+
+# 然会恢复这个commit没有放入staging area里的状态
+# 也就是将前一个commit的snapshot放入stagging area中，那么当前commit的change就是还未add的状态
+git reset --mixed(可以不写默认的) HEAD^ 
+
+# 然后将change分别add再commit
+# 之后再 
+git rebase --continue
+```
+
+
+
+#### Rewriting History Using GitKraken
+
+略
+
