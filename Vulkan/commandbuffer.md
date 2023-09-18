@@ -8,7 +8,7 @@
 
 framebuffer实际上是将实际的附件和渲染过程关联起来
 
-为每个==swapchainimageview==创建一个framebuffer即刻
+为每个==swapchainimageview==创建一个framebuffer即可
 
 
 

@@ -1,6 +1,6 @@
 <center>Render passses</center>
 
-为什么我们需要renderpasses呢，这里我就引用一下知乎上justin的文章。下面很多都是他的原话
+为什么我们需要`renderpasses`呢，这里我就引用一下知乎上justin的文章。下面很多都是他的原话
 
 地址：https://zhuanlan.zhihu.com/p/404118061
 
@@ -11,39 +11,37 @@
 
 
 
-对于renderpass的理解参考了math philosohpy的文章
+对于`renderpass`的理解参考了math philosohpy的文章
 
 地址：https://zhuanlan.zhihu.com/p/418277173
 
-renderPass里存了些啥：
+`renderPass`里存了些啥：
 
 1，一堆附件（两种类型，颜色，深度）
 
 2， 一堆附件引用（和上面的附件基本是1对1）
 
-3，若干SubPass ,每个SubPass对应一堆附件引用
+3，若干`SubPass `,每个`SubPass`对应一堆附件引用
 
-4，若干SubPassDependency, 每个子通道依赖对应一个源SubPass,一个目标SubPass
+4，若干`SubPassDependency`, 每个子通道依赖对应一个源`SubPass`,一个目标`SubPass`
 
-5, 最后1个RenderPass对应上面所有。
-
-
-
-附件引用的作用仅仅只是表达一个附件可以同时被两个subpass引用
+5, 最后1个`RenderPass`对应上面所有。
 
 
 
-pipeline相当于是铺设的管道，这个管道里可以是石油也可以是天然气（attachment），而renderpass就相当于是组织管道内流通的物质的
+附件引用的作用仅仅只是表达一个附件可以同时被两个`subpass`引用
+
+
+
+pipeline相当于是铺设的管道，这个管道里可以是石油也可以是天然气（`attachment`），而`renderpass`就相当于是组织管道内流通的物质的
 
 
 
 #### set up
 
-让vulkan在渲染的时候知道 哪些framebuffer attachments会被使用
+让vulkan在渲染的时候知道 哪些`framebuffer attachments`会被使用
 
-需要指定有多少 ==颜色==和==深度==缓存等信息，这些信息都封装在==render pass==
-
-对象中
+需要指定有多少 ==颜色==和==深度==缓存等信息，这些信息都封装在==render pass==对象中
 
 附件是我们在绘图命令期间渲染的图像，换句话说它们是渲染目标。可用于片段着色器内部的像素局部加载操作，在后续子通道中的同一像素处读取在一个子通道中写入的帧缓冲附件。
 
@@ -51,13 +49,13 @@ pipeline相当于是铺设的管道，这个管道里可以是石油也可以是
 
 #### Attachment description
 
-`loadOp`和`storeOp`决定attachment里的数据在渲染前后如何处理,应用于颜色和深度
+`loadOp`和`storeOp`决定`attachment`里的数据在渲染前后如何处理,应用于颜色和深度
 
-还有个`stencilLoadOp`和`stencilStoreOp`，则应用于stencil 数据
+还有个`stencilLoadOp`和`stencilStoreOp`，则应用于`stencil `数据
 
 
 
-Textures 和 framebuffers 被 带有具体像素格式的`VkImage`所表示。
+`Textures` 和 `framebuffers` 被 带有具体像素格式的`VkImage`所表示。
 
 
 
@@ -71,5 +69,101 @@ reference里的attachment指的是 该引用对应的attachment在attachment des
 
 
 
-#### Render pass
+---
 
+---
+
+
+
+### 关于renderPass新的理解
+
+知乎上的CreateX Engine讲得很不错，我就把他的笔记基本照抄下来，链接如下：
+
+https://zhuanlan.zhihu.com/p/131392827#:~:text=AF%20%E5%9C%A8%20Vulkan%20%E4%B8%AD%E7%9A%84%E5%AE%9E%E7%8E%B0%201%201%E3%80%81RenderPass%20%E8%AE%BE%E7%BD%AE%20SubPass,4%204%E3%80%81Shader%20%E7%BC%96%E5%86%99%20...%205%205%E3%80%81%E6%B8%B2%E6%9F%93%E6%97%B6%E5%88%87%E6%8D%A2%20SubPass%20
+
+
+
+#### renderPass 的创建
+
+首先renderPass得创建包含以下步骤：
+
+![](./images/RenderPass.png)
+
+#### Image Attachment 创建
+
+Vulkan规定`Input Attachment`**只能**用于`Image`资源,且**只能**用于Fragment Shader，并且资源（指的是image object）的`usage`必须是:
+
++ `VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT`与下面两个bit的组合，且该bit不能单独存在
++ `VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT`、`VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT`
+
+
+
+#### Descriptor配置
+
+与 `Color Attachment` 不同的是，`SubPass` 的 `Input Attachment` 被视为 `Shader` **可访问资源**，只是读取方式与 `Sampled Image` 不同，因此需要在渲染时将 `Input Attachment` 对应的资源绑定在管线中。Vulkan 中绑定资源到管线需要通过 `Descriptor` 完成，因此要将 `Input Attachment` 的**描述符类型**指定为 `VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT`，剩余的操作和绑定普通的 Shader 资源一样。
+
+由于`Input attachment`只能用于Fragment Shader中，因此在对应的`descriptorSetLayout`的`binding`中对于`stageFlags`只能是`VK_SHADER_STAGE_FRAGMENT_BIT`
+
+
+
+#### Shader编写
+
+Shader中使用Input Attachment 需要特殊的Shader语法
+
+在GLSL中input声明代码如下：
+
+```c++
+layout (input_attachment_index = 0, binding = 0) uniform subpassInput inputColor;
+layout (input_attachment_index = 1, binding = 1) uniform subpassInput inputDepth;
+```
+
+使用代码如下：
+
+```c++
+vec3 color = subpassLoad(inputColor).rgb;
+....
+float depth = subpassLoad(inputDepth).r;
+```
+
+
+
+#### 渲染时切换SubPass
+
+在渲染时 `BeginRenderPass` 之后，可以通过 `vkCmdNextSubpass` 命令来切换 `SubPass`，每次调用时会自动切换到下一个 `SubPass`，并且自动执行 `SubPass` 之间的 `Dependency` 以保证资源数据同步。
+
+
+
+#### 限制
+
+直接是老哥的原话
+
+由 `VkAttachmentReference` 结构可以看出，不能将一个 `Attachment` 同时设置为 `COLOR_ATTACHMENT_OPTIMAL` 和 `SHADER_READ_ONLY_OPTIMAL`，否则会违反 `VkImageLayout` 的**唯一性**，因此 Vulkan 也就不能在一个 `SubPass` 中对一个 `Attachment` 既写又读。
+
+
+
+### FrameBuffer
+
+为什么需要frameBuffer呢？这里我把知乎YOung的回答记录了下来，方便以后回看。链接如下：
+
+https://zhuanlan.zhihu.com/p/48066609
+
++ Frame Buffer概念
+
+  `Frame Buffer`封装了 `color buffer image` 和 `depth buffer image`。其中`color buffer image` 为从`swap chain` 获取的`image`，`frame buffer`创建个数 等于 `swap chain`的`image`的数量，比如，双缓冲的swap chain需要对应建立2个frame buffer。
+
+  此外，Frame Buffer 还负责把 render pass 的 attachment 跟 image 关联起来
+
++ 帧缓冲的作用（来自知乎洛阳李四）
+
+  https://zhuanlan.zhihu.com/p/373993587
+
+  + 当创建并绑定了一个帧缓冲后，再进行的渲染操作都将会绘制到这个帧缓冲中，由于这不是默认的缓冲，所以不会对屏幕上的结果产生任何影响，这个过程也被称为离屏渲染。
+  + 我们拿离屏渲染的结果进行一系列“黑处理”，然后再到默认帧缓冲当中，让他显示到屏幕上，完成一次渲染操作。其中帧缓冲中的结果，即离屏渲染的结果，是一个半成品；一系列黑处理就是所谓的后期处理；
+
++ 有一个问题？就是为啥不对attachment使用sampler呢？
+
+  这个问题，则说呢。如果仔细看一下renderpass创建的时候会指定attachment description，在description就已经说了如何处理attachment中的数据。
+
+  + attachment主要目的是作为渲染通道的输出目标，而不是作为着色器的采样源。
+  + attachment的数据通常是直接由渲染管线（render pipeline）处理的，而不需要着色器进行显示的采样操作。渲染管线会在渲染通道的过程中自动将数据写入attachment。
+  + Vulkan中的渲染通道（render pass）和帧缓冲（framebuffer）的概念允许您**明确定义附件的用途和格式**（attachment description），以及如何在渲染通道中使用它们。这种灵活性使得在渲染通道中处理附件的数据变得更加高效和直观。

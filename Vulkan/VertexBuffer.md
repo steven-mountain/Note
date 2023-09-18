@@ -49,7 +49,7 @@ vertex的用法就好像是，
 
 #### vertex buffer
 
-+ 在vulkan中buffer是一块内存区域用于存储共显卡随机读取的数据
++ 在vulkan中buffer是一块内存区域用于存储供显卡随机读取的数据
 
 + 和vulkan对象不同，buffer不会自动分配内存
 
@@ -70,7 +70,7 @@ vertex的用法就好像是，
 + memcpy
 + vkunmapmemory
 
-在recordcommandbuffer中bingvertexbuffer
+在recordcommandbuffer中bindvertexbuffer
 
 
 
@@ -97,9 +97,9 @@ DEVICE_LOCAL：设备内存，即显存
 
 缓冲区之间传输数据需要传输队列
 
-+ 在usegae里设置 ==源== 和 ==目的==
++ 在usegae里设置 ==源（staging buffer）== 和 ==目的（vertexbuffer）==
 + 使用command buffer来执行传输
-+ vkCmdCopyBuffer
++ vkCmdCopyBuffer（创建一个局域的commandbuffer？创建之后还要submit才算执行，完成后free掉）
 
 
 
