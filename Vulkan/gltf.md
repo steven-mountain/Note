@@ -324,11 +324,12 @@ URI的指向：
     }
   ],
   
-  "meshes" : [
+  "meshes" : [ // 一个mesh代表了一个出现在场景中的几何体
     {
       "primitives" : [ { // 包含了对组成mesh的几何数据的描述
         "attributes" : { // 描述的是mesh geometry的vertices的attributes
-          "POSITION" : 1
+          "POSITION" : 1,
+          "NORMAL" : 2 // 这个是accessor的坐标，用于表示从哪个accessor中获取顶点的法向量
         },
         "indices" : 0 // 用于描述indexed geometry, 默认是三角形
       } ] // 这两者都引用了 accessor对象
@@ -362,7 +363,7 @@ URI的指向：
       "componentType" : 5123, // 指定这些数据元素的组件类型, FLOAT ,INT, UNSIGNED_SHORT
       "count" : 3, // 用于指定由多少元素，
       "type" : "SCALAR", // 指向的数据的类型，SCALAR, VEC3, MATR
-      "max" : [ 2 ],
+      "max" : [ 2 ], // min,max逐组件地限制最大值，最小值。在优先加载以及可视性检测的时候很有用
       "min" : [ 0 ]
     },
     {
