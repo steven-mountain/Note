@@ -400,3 +400,39 @@ root                 R                    R
 
 
 
+## Material
+
+the object surface is encoded with three main parameters:
+
+- The ***base color***, which is the "main" color of the object surface.
+- The ***metallic*** value. This is a parameter that describes how much the reflective behavior of the material resembles that of a metal.
+- The ***roughness*** value, indicating how rough the surface is, affecting the light scattering.
+
+metallic-roughness model is the representation that is used in glTF.
+
+other material representations, like the specular-glossiness-model, are supported vis extensions.
+
+additional effects:
+
+- An ***emissive*** texture describes the parts of the object surface that emit light with a certain color.
+- The ***occlusion*** texture can be used to simulate the effect of objects self-shadowing each other.
+- The ***normal map*** is a texture applied to modulate the surface normal in a way that makes it possible to simulate finer geometric details without the cost of a higher mesh resolution.
+
+```json
+  "materials" : [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [ 1.000, 0.766, 0.336, 1.0 ],
+        "metallicFactor": 0.5,
+        "roughnessFactor": 0.1
+      }
+    }
+  ],
+```
+
+
+
+
+
+Fatal : VkResult is "ERROR_DEVICE_LOST" in E:\models\VulkanReSTIR\base\vulkanexamplebase.cpp at line 779
+ERROR: [774851941][VUID-vkQueueSubmit-pCommandBuffers-00071] : Validation Error: [ VUID-vkQueueSubmit-pCommandBuffers-00071 ] Object 0: handle = 0x19971b96840, type = VK_OBJECT_TYPE_DEVICE; | MessageID = 0x2e2f4d65 | vkQueueSubmit(): pSubmits[0].pCommandBuffers[0] VkCommandBuffer 0x19903f8ca60[] is already in use and is not marked for simultaneous use. The Vulkan spec states: If any element of the pCommandBuffers member of any element of pSubmits was not recorded with the VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, it must not be in the pending state (https://vulkan.lunarg.com/doc/view/1.3.231.1/windows/1.3-extensions/vkspec.html#VUID-vkQueueSubmit-pCommandBuffers-00071)
