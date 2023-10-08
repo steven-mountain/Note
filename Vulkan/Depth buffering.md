@@ -72,6 +72,19 @@ $$
 
 
 
+### SSBO与UBO
+
+SSBO
+
+关于SSBO的理解，CSDN上的What_can_you_do老哥的理解不错，这里记录一下。链接如下：
+
+https://blog.csdn.net/What_can_you_do/article/details/125620229
+
+UBO：Uniform Buffer Object; SSBO: Shader Storage Buffer Object
+
++ UBO：与普通uniform变量相比，像是一个可以容纳多个变量的结构体。存储在显存的常量区，速度快，编译时大小是确定的，而且大小是有限制的，在着色器里**可读但不可写**，修饰符uniform，一般用于少量的变量设置，在所有着色器都常用到。
++ SSBO：在着色器中**可读可写**，修饰符buffer，存储在全局变量区，速度比UBO慢些，但是大小在编译时不确定，大小基本没有限制，一般用于两个着色器之间处理后数据的传递，多见于计算着色器。
+
 
 
 ### 什么是depth buffer
@@ -85,3 +98,13 @@ vulkan和OpenGL的`z`轴都是指向屏幕内，因此离屏幕**越近**z值**�
 ### Depth image and view
 
 depth attachment 是基于image的，就像color attachment一样。不同点在于swapchain不会自动为我们创建depth image。我们只需要一张depth image（保存当前draw的深度信息）就好了，因为一次只调用一次draw operation。
+
+为depth image选取正确的格式很关键。至少需要24位的精度。有一下几种格式。
+
+- `VK_FORMAT_D32_SFLOAT`: 32-bit float for depth
+- `VK_FORMAT_D32_SFLOAT_S8_UINT`: 32-bit signed float for depth and 8 bit stencil component
+- `VK_FORMAT_D24_UNORM_S8_UINT`: 24-bit float for depth and 8 bit stencil component
+
+但是呢最好是设置一系列的候选类型，然后通过`vkGetPhysicalDeviceFormatProperties`函数找到最适合的。
+
+VkFormatFeatureFlags 与 VkImageLayout的区别：前者描述了**图像资源支持的特性**，而后者描述了**图像资源在内存中的布局和访问方式**。
