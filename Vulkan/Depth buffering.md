@@ -108,3 +108,36 @@ depth attachment 是基于image的，就像color attachment一样。不同点在
 但是呢最好是设置一系列的候选类型，然后通过`vkGetPhysicalDeviceFormatProperties`函数找到最适合的。
 
 VkFormatFeatureFlags 与 VkImageLayout的区别：前者描述了**图像资源支持的特性**，而后者描述了**图像资源在内存中的布局和访问方式**。
+
+
+
+### 在pipeline create里启用depth 和 stencil test
+
+通过 `VkPipelineDepthStencilStateCreateInfo`结构体设置这些信息。
+
+```c++
+VkPipelineDepthStencilStateCreateInfo depthStencil{};
+depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+depthStencil.depthTestEnable = VK_TRUE; // 启用深度测试
+depthStencil.depthWriteEnable = VK_TRUE; // 如果新的fragment通过了深度测试，那么就把它写进入
+depthStencil.depthCompareOp = VK_COMPARE_OP_LESS; // 值越小，离屏幕越近
+depthStencil.depthBoundsTestEnable = VK_FALSE; // 可以自定义深度测试的上下边界
+depthStencil.minDepthBounds = 0.0f; // Optional
+depthStencil.maxDepthBounds = 1.0f; // Optional
+depthStencil.stencilTestEnable = VK_FALSE; // 不启用模板测试
+depthStencil.front = {}; // Optional
+depthStencil.back = {}; // Optional
+pipelineInfo.pDepthStencilState = &depthStencil;
+```
+
+
+
+### `VkFormatFearueFlags` 与 `VkImageUsageFlags`两者的区别
+
+在Vulkan API中，`VkFormatFeatureFlags`和`VkImageUsageFlags`都是用于描述图像资源的特性和访问方式的枚举类型，但是它们的作用不同。
+
+`VkFormatFeatureFlags`用于==描述图像资源支持的特性==。它包含了一些标志位，用于==描述图像资源的布局和特性==。这些标志位包括但不限于：`VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT`、`VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT`、`VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT`、`VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT`等 。
+
+相比之下，`VkImageUsageFlags`用于==描述图像资源在管线中的使用方式==。它包含了一些标志位，用于描述图像资源在管线中的使用方式。这些标志位包括但不限于：`VK_IMAGE_USAGE_TRANSFER_SRC_BIT`、`VK_IMAGE_USAGE_TRANSFER_DST_BIT`、`VK_IMAGE_USAGE_SAMPLED_BIT`、`VK_IMAGE_USAGE_STORAGE_BIT`、`VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT`、`VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT`等 .
+
+因此，这两个枚举类型都是用于==描述图像资源的特性和访问方式==。但是，它们的作用不同：前者描述了图像资源支持的特性，而后者描述了图像资源在管线中的使用方式。 : Khronos Group - VkFormatFeatureFlags : Khronos Group - VkFormatProperties : Khronos Group - VkFormatFeatureFlagBits : Khronos Group - VkImageUsageFlags : Khronos Group - VkImageUsageFlagBits : Vulkan Tutorial - Image views and samplers

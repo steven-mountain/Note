@@ -89,6 +89,15 @@ https://zhuanlan.zhihu.com/p/131392827#:~:text=AF%20%E5%9C%A8%20Vulkan%20%E4%B8%
 
 ![](./images/RenderPass.png)
 
+![](./images/attachment.png)
+
+`VkAttachmentReference`结构体用于描述一个子通道中的附件。它包含了以下成员变量：
+
+- `attachment`：附件的索引。
+- `layout`：==附件在管线中的使用方式==。
+
+
+
 #### Image Attachment 创建
 
 Vulkan规定`Input Attachment`**只能**用于`Image`资源,且**只能**用于Fragment Shader，并且资源（指的是image object）的`usage`必须是:
@@ -165,5 +174,31 @@ https://zhuanlan.zhihu.com/p/48066609
   这个问题，则说呢。如果仔细看一下renderpass创建的时候会指定attachment description，在description就已经说了如何处理attachment中的数据。
 
   + attachment主要目的是作为渲染通道的输出目标，而不是作为着色器的采样源。
-  + attachment的数据通常是直接由渲染管线（render pipeline）处理的，而不需要着色器进行显示的采样操作。渲染管线会在渲染通道的过程中自动将数据写入attachment。
+  + attachment的数据通常是直接由渲染管线（render pipeline）处理的，而不需要着色器进行显式的采样操作。渲染管线会在渲染通道的过程中自动将数据写入attachment。
   + Vulkan中的渲染通道（render pass）和帧缓冲（framebuffer）的概念允许您**明确定义附件的用途和格式**（attachment description），以及如何在渲染通道中使用它们。这种灵活性使得在渲染通道中处理附件的数据变得更加高效和直观。
+
+
+
+### descriptor与description的区别：
+
+在Vulkan API中，`descriptor`和`description`是两个不同的概念。
+
++ `descriptor`是一个特殊的不透明的shader变量，用于**以间接方式访问缓冲区和图像资源**。它可以被认为是指向某个资源的“指针”。在绘制操作之间，这些变量可以被改变，因此shader每次绘制时可以访问不同的资源。在Vulkan API中，所有的操作都以`descriptor set`为单位，不论是绑定到pipeline还是更新set中的一个descriptor。因此，Vulkan API并没有给出一个descriptor的handle，而是以`WriteDescriptorSet`的形式来完成一个buffer和descriptor的binding工作.
+
++ 相比之下，`description`是一个抽象的描述，用来**描述数据块或解释数据块**。在Vertex Input中，描述符描述了数据块的组织方式。例如，在Vulkan Tutorial Descriptor layout and buffer中，我们首先建立DescriptorSetLayoutBindings，这个部分由多个DescriptorSetLayoutBinding组成，描述了一个set的数据组织。它们共同构成了一个DescriptorSetLayout的描述。在Shader中，我们最终通过
+
+​	ayout(set = 0, binding = 0) uniform MyBuffer { 
+
+​		mat4 model; mat4 view; mat4 proj; 
+
+​	} ubo[\]; 
+
+​	来获取我们写入的对应数据
+
+因此，这两个概念是不同的：前者是用于访问缓冲区和图像资源的变量；后者是用于描述数据块或解释数据块的抽象描述。
+
+
+
+### 设置clearValues
+
+在renderpass中设置多个 clear Value，它们的顺序应该与attachments中的顺序相对应。
