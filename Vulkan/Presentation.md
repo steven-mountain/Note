@@ -102,6 +102,44 @@ shader也可以访问这些渲染目标，在片元着色器中进行深度测�
 
 
 
+### framebuffer与renderpass
+
+```c++
+	void createFramebuffer() {
+		swapchainFramebuffer.resize(swapChainImageView.size());
+		for (int i = 0; i < swapchainFramebuffer.size(); ++i) {
+			std::array<VkImageView, 2> attachments = {
+				swapChainImageView[i],
+				depthImageView
+			};
+
+			VkFramebufferCreateInfo frambufferCreateInfo{};
+			frambufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			frambufferCreateInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+			frambufferCreateInfo.pAttachments = attachments.data();
+			frambufferCreateInfo.renderPass = renderPass;
+			frambufferCreateInfo.width = swapChainExtent.width;
+			frambufferCreateInfo.height = swapChainExtent.height;
+			frambufferCreateInfo.layers = 1;
+			if (vkCreateFramebuffer(device, &frambufferCreateInfo, nullptr, &swapchainFramebuffer[i]) != VK_SUCCESS) {
+				throw std::runtime_error("failed to create framebuffer");
+			}
+		}
+	}
+
+VkRenderPassBeginInfo renderPassBeginInfo{};
+renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+renderPassBeginInfo.pClearValues = clearValues.data();
+// 这里应该是找到当前可用的swapchain image对应的framebuffer
+renderPassBeginInfo.framebuffer = swapchainFramebuffer[imageIndex]; 
+renderPassBeginInfo.renderArea.offset = {0, 0};
+renderPassBeginInfo.renderArea.extent = swapChainExtent;
+renderPassBeginInfo.renderPass = renderPass;
+```
+
+
+
 
 
 ---
