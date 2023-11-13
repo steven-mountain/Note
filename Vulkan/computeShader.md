@@ -100,6 +100,10 @@ compute shader 相关
 
 
 
+怎么说？感觉SSBO应该不算是一个特定的buffer类型，更像是给unifrom 或者image加上一个可写的操作。
+
+
+
 ### compute pipeline
 
 因为compute不是渲染管线的一部分，我们需要使用`vkCraeteComputePipeline`单独创建一个compute pipeline来运行compute commands。
@@ -199,3 +203,85 @@ block大小的选择：
 
 + 在dispatch里指定的是工作组
 + 而在compute shader里指定的是工作组内的线程数
+
+
+
+最后将commandbuffre submit到支持compute的queue上去。
+
+
+
+### 在graphics 和 compute之间进行同步
+
+使用semaphores 和 fences 来保证vertex shader在 compute shader完成更新之后再读取。
+
+即使指令被按照顺序提交，但它们不一定会被GPU按顺序执行。
+
+
+
+### 关于vulkan中的信号量
+
++ fence
+
+  在Vulkan中，`vkWaitForFences`函数**用于等待GPU来激活围栏**（fence）. 围栏是一种同步机制，用于CPU和GPU之间的同步，提供了一种粗粒度的，**从Device向Host单向传递信息的机制**。Host可以使用围栏来查询通过 `vkQueueSubmit` / `vkQueueBindSparse` 所提交的操作是否完成。简言之，在 `vkQueueSubmit` / `vkQueueBindSparse` 的时候，可以附加带上一个围栏对象。之后就可以使用这个对象来查询之前提交的状态了.
+
+  请注意，信号量是一种同步机制，用于同步不同的队列之间或同一个队列不同提交之间的执行顺序
+
+  ```c++
+  VkCommandBuffer A = ... // record command buffer with the transfer
+  VkFence F = ... // create the fence
+  
+  // enqueue A, start work immediately, signal F when done
+  vkQueueSubmit(work: A, fence: F)
+  
+  vkWaitForFence(F) // blocks execution until A has finished executing
+  
+  save_screenshot_to_disk() // can't run until the transfer has finished
+  ```
+
+  
+
++ semaphore
+
+  Semaphore是Vulkan中用于同步队列操作的一种机制。它可以协调队列内和队列之间的操作。在Vulkan中，Semaphore主要用于同步交换链的图像获取和呈现。Semaphore的使用需要在调用顺序上有先后顺序的情况下进行同步。Semaphore的使用可以通过在`vkAcquireNextImageKHR`和`vkQueuePresentKHR`接口中传递信号量来实现。具体来说，当一个图像被获取时，需要使用一个信号量来同步，以确保该图像不会被重复获取或呈现。当一个图像被呈现时，需要使用另一个信号量来同步，以确保该图像不会被重复呈现或获取。
+
+  pWaitSemaphores和pSignalSemaphores的作用范围如下：
+
+  - pWaitSemaphores：表示在**提交**命令缓冲区**之前**必须**等待**哪些信号量。这些信号量必须是未完成信号或等待操作的信号量或围栏。Semaphore必须是二进制信号量。如果在提交命令缓冲区之前没有需要等待的信号量，则可以将其设置为NULL。
+  - pSignalSemaphores：表示命令缓冲区**执行完毕**后需要**发出**哪些信号量。这些信号量必须是未完成信号或等待操作的信号量或围栏。Semaphore必须是二进制信号量。如果不需要发出任何信号量，则可以将其设置为NULL。
+
+
+
+### 数据冒险
+
++ read after write hazard
+
+  先写后读相关性。当第二条指令在第一条指令写入寄存器之前读取该寄存器时，就会产生RAW相关性。
+
++ write after read hazard
+
+  当第一条指令读取一个寄存器，而第二条指令在第一条指令写入该寄存器之前写入该寄存器时，就会产生WAR相关性。
+
++ write after write hazard
+
+  先写后写相关性。当两条指令都试图写入同一个寄存器时，就会产生WAW相关性。
+
+![](./images/dataHazard.png)
+
+
+
+### glsl 内置变量
+
+| 内置变量      | 含义                               | 值数据类型 |
+| ------------- | ---------------------------------- | ---------- |
+| gl_PointSize  | 点渲染模式，方形点区域渲染像素大小 | float      |
+| gl_Position   | 顶点位置坐标                       | vec4       |
+| gl_FragColor  | 片元颜色值                         | vec4       |
+| gl_FragCoord  | 片元坐标，单位像素                 | vec2       |
+| gl_PointCoord | 点渲染模式对应点像素坐标           | vec2       |
+
+
+
+还需要创建一个 绘制粒子系统的graphics pipeline，然后单独写一个recordParticleCommandBuffer
+
+
+
