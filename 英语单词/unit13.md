@@ -122,6 +122,7 @@ recognize, ignorant
   + **n.**微装出游的人；用假名的人
   + 由 ***in-* “不，相反，没有”**（见 [in-](https://www.etymonline.com/cn/word/in-)（1））+ *cognitus,* 过去分词 *cognoscere* “了解”
   + 源自意大利 *incognito* “未知的”，尤其与旅行有关，源自拉丁语 *incognitus* “未知的，未调查的”
+  + 不知道的，也就是隐藏的，不为人所知的。
 
 
 
