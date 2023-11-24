@@ -98,6 +98,24 @@ https://zhuanlan.zhihu.com/p/131392827#:~:text=AF%20%E5%9C%A8%20Vulkan%20%E4%B8%
 
 
 
+#### 需要注意的点：
+
+ERROR: [1306546659][VUID-VkRenderPassBeginInfo-clearValueCount-00902] : Validation Error: [ VUID-VkRenderPassBeginInfo-clearValueCount-00902 ] Object 0: handle = 0x3a9c5c00000000c4, type = VK_OBJECT_TYPE_RENDER_PASS; | MessageID = 0x4de051e3 | In vkCmdBeginRenderPass the VkRenderPassBeginInfo struct has a **clearValueCount** of 5 but there must be at least 6 entries in pClearValues array to account for the highest index **attachment** in VkRenderPass 0x3a9c5c00000000c4[] that uses VK_ATTACHMENT_LOAD_OP_CLEAR is 6. Note that the pClearValues array is indexed by attachment number so even if some pClearValues entries between 0 and 5 correspond to attachments that aren't cleared they will be ignored. The Vulkan spec states: clearValueCount must be greater than the largest attachment index in renderPass specifying a loadOp (or stencilLoadOp, if the attachment has a depth/stencil format) of VK_ATTACHMENT_LOAD_OP_CLEAR (https://vulkan.lunarg.com/doc/view/1.3.231.1/windows/1.3-extensions/vkspec.html#VUID-VkRenderPassBeginInfo-clearValueCount-00902)
+
+这个错误信息表明在调用 `vkCmdBeginRenderPass` 函数时，提供的 `VkRenderPassBeginInfo` 结构体中的 `clearValueCount` 数量不符合要求。
+
+具体来说，错误中提到 `clearValueCount` 被设置为5，但是渲染通道（`VkRenderPass` 对象）的某个附件（attachment）的 `VK_ATTACHMENT_LOAD_OP_CLEAR` 操作要求至少有6个清除值（`pClearValues` 数组的元素数量要至少为6）。
+
+要解决这个问题，你需要确保 `pClearValues` 数**组的大小**至少为渲染通道中使用 `VK_ATTACHMENT_LOAD_OP_CLEAR` **操作的附件数量加一**，也就是最大的附件索引加一。
+
+---
+
+ERROR: [1165064310][VUID-VkGraphicsPipelineCreateInfo-layout-00756] : Validation Error: [ VUID-VkGraphicsPipelineCreateInfo-layout-00756 ] Object 0: handle = 0x80f3660000000110, type = VK_OBJECT_TYPE_SHADER_MODULE; Object 1: handle = 0x8e119b000000010d, type = VK_OBJECT_TYPE_PIPELINE_LAYOUT; | MessageID = 0x45717876 | Type mismatch on descriptor **slot 0.11** (expected `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK`) but descriptor of type VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER The Vulkan spec states: layout must be consistent with all shaders specified in pStages (https://vulkan.lunarg.com/doc/view/1.3.231.1/windows/1.3-extensions/vkspec.html#VUID-VkGraphicsPipelineCreateInfo-layout-00756)
+
+这里槽位 0.11 指的是 set = 0， binding = 11
+
+
+
 #### Image Attachment 创建
 
 Vulkan规定`Input Attachment`**只能**用于`Image`资源,且**只能**用于Fragment Shader，并且资源（指的是image object）的`usage`必须是:
