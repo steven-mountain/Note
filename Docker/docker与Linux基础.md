@@ -46,6 +46,9 @@ docker run --name nickname imagename # 给生成的容器起别名
 docker exec -it containername/id /bin/bash
 docker exec -it -u user id /bin/bash # 指定用户进入容器，不需要输入密码就可以直接进入
 
+# 停止容器
+docker stop container
+
 # 重新运行已经停掉的容器
 docker start -ai container # 前提是生成此容器时用了 -it参数
 docker start id # id可以只给前2-3个字符
@@ -60,6 +63,30 @@ docker rm containername
 
 + 守护程序代理：执行docker pull，build等所需要的代理
 + docker容器代理：就是容器可以使用的代理
+
+
+
+#### 1.6 docker 后台启动，但是退出
+
+centos 启动一个容器添加了-d 参数，但是[docker](https://so.csdn.net/so/search?q=docker&spm=1001.2101.3001.7020) ps 或者docker ps -a查看却已经退出了
+
+```wiki
+1、docker容器运行必须有一个前台进程， 如果没有前台进程执行，容器认为空闲，就会自行退出
+2、容器运行的命令如果不是那些一直挂起的命令（ 运行top，tail、循环、tomcat等），就是会自动退出
+3、这个是 docker 的机制问题
+```
+
+解决方法
+
+```wiki
+docker run -dit 镜像名 /bin/bash
+添加-it 参数交互运行
+添加-d 参数后台运行
+```
+
+————————————————
+版权声明：本文为CSDN博主「emmmmmm3」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/emmmmmm3/article/details/117021997
 
 
 

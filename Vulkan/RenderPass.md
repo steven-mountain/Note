@@ -116,6 +116,19 @@ ERROR: [1165064310][VUID-VkGraphicsPipelineCreateInfo-layout-00756] : Validation
 
 
 
+还需要在pipline中设定 **VkPipelineColorBlendAttachmentState**，具体来说，它定义了针对单个颜色附件的混合和颜色逻辑操作的配置。每个图形管线都可以有多个颜色附件，而 `VkPipelineColorBlendAttachmentState` 结构体就用于配置其中一个附件的混合状态。以下是 `VkPipelineColorBlendAttachmentState` 结构体的主要成员和其作用：
+
+- `blendEnable`：指定是否启用颜色混合。如果为 `VK_TRUE`，则启用混合；如果为 `VK_FALSE`，则禁用混合。
+- `colorWriteMask`：指定写入颜色缓冲时使用的掩码。它是一个包含四个标志的位字段，分别表示红色、绿色、蓝色和 alpha 通道是否可以写入。例如，`VK_COLOR_COMPONENT_R_BIT` 表示允许写入红色通道，`VK_COLOR_COMPONENT_G_BIT` 表示允许写入绿色通道，以此类推。
+- `srcColorBlendFactor` 和 `dstColorBlendFactor`：这两个成员定义了颜色混合时的源和目标因子。它们决定了混合操作中源和目标颜色的权重。例如，`VK_BLEND_FACTOR_SRC_ALPHA` 表示使用源颜色的 alpha 分量作为权重。
+- `colorBlendOp`：指定颜色混合的操作。它定义了混合时源和目标颜色的结合方式。常见的混合操作包括加法、减法、反向减法等。
+- `srcAlphaBlendFactor` 和 `dstAlphaBlendFactor`：类似于颜色混合因子，这两个成员定义了 alpha 混合时的源和目标因子。
+- `alphaBlendOp`：类似于颜色混合操作，定义了 alpha 混合时源和目标颜色的结合方式。
+
+使用 `VkPipelineColorBlendAttachmentState`，你可以根据具体的需求配置颜色混合的行为，以实现各种效果，如透明度、阴影等。在创建图形管线时，你可以为每个颜色附件配置不同的混合状态，以满足渲染场景的需求。
+
+
+
 #### Image Attachment 创建
 
 Vulkan规定`Input Attachment`**只能**用于`Image`资源,且**只能**用于Fragment Shader，并且资源（指的是image object）的`usage`必须是:
