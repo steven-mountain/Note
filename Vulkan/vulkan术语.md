@@ -77,3 +77,9 @@ vulkan术语
 `VK_KHR_deferred_host_operations` 是 Vulkan 的一个扩展，而 `VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME` 是这个扩展的名称字符串常量。这个扩展提供了一种机制，**允许某些操作在主机（CPU）上异步地执行**，而不是立即完成。这主要用于支持其他需要大量异步主机工作的扩展，比如光线追踪或者某些复杂的计算任务。**这样可以避免阻塞主线程，提高应用程序的响应性和性能。**
 
 之所以是deviceExtension，因为它提供的功能和特性是针对**特定物理设备**（GPU）的。这个扩展允许对那些可能需要大量异步主机工作的设备级操作进行优化和异步处理，这些操作和设备的具体能力密切相关。
+
+
+
+### 5、使用如何使用拓展的函数
+
+如果扩展已经被启用，则可以使用 `vkGetInstanceProcAddr` 或 `vkGetDeviceProcAddr` 获取或拓展功能和某些平台特定的函数的地址
