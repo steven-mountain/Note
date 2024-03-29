@@ -179,11 +179,17 @@ Latin grex; 一群
 
   + **se-**：apart
 
+segregate 反义词为 integrate（整合）
+
 
 
 ### FLU - "to flow"
 
 Latin verb fluere
+
+in+动词 一般表示介词：里面去的意思
+
+influence：最开始指一些看不到的流动，来自星星中，会对人的行为产生影响
 
 + affluence
   + **n.**富裕；丰富；流入；汇集
@@ -194,11 +200,11 @@ Latin verb fluere
 + effluent
   + **n.**流出物
   + **adj.**流出的
-  + 15世纪中期，源自拉丁语 *effluentem*（主格 *effluens*），“**流出的**”，现在分词 *effluere* “**流出**”，由 *ex* “出”（见 [ex-](https://www.etymonline.com/cn/word/ex-))和 *fluere* “流动”（见 [fluent](https://www.etymonline.com/cn/word/fluent)）的同化形式组成。作为名词，“**流出的东西**”，始于1859年； 特指“**液体工业废料**”始于1930年。
+  + 15世纪中期，源自拉丁语 *effluentem*（主格 *effluens*），“**流出的**”，现在分词 *effluere* “**流出**”，由 ***ex* “出”**（见 [ex-](https://www.etymonline.com/cn/word/ex-))和 *fluere* “流动”（见 [fluent](https://www.etymonline.com/cn/word/fluent)）的同化形式组成。作为名词，“**流出的东西**”，始于1859年； 特指“**液体工业废料**”始于1930年。
 
 
 
-+ confluence
++ confluence 
   + **n.**汇聚；交汇处
   + 15世纪初，“**特别是两条或更多条河流的汇流**”，源自晚期拉丁语 *confluentia*，源自拉丁语 *confluentem*（主格 *confluens*），现在分词形式为 *confluere* “**汇流**”，源自 *com* 的同化形式“**与，一起**”（参见 [con-](https://www.etymonline.com/cn/word/con-)）+ *fluere* “流动”（参见 [fluent](https://www.etymonline.com/cn/word/fluent)）。
 
@@ -206,6 +212,7 @@ Latin verb fluere
 
 + mellifluous
   + **adj.**甜美流畅的；悦耳动听的
+  + 通常应用于形容声音
   + 早在15世纪，“**甜美如蜜，令人愉悦，柔和流畅**”（描述气味、说话风格或写作等），源于拉丁语的 *mellifluus* “**像蜜一样流动的（或似蜜一样甜的）**”，源自拉丁语 *mel* （属格 *mellis* ）“蜜”（相关词汇为希腊语的 ***meli* “蜜”**； 源自 PIE 词根 [*melit-](https://www.etymonline.com/cn/word/*melit-) “蜜”）和 *-fluus* “流动的”，来自 *fluere* “流动 ”（参见 [fluent](https://www.etymonline.com/cn/word/fluent) ）。
   + **meli-**：蜜
 
@@ -237,12 +244,15 @@ Latin verb prehendere
 
 + comprehend
   + **v.**理解；领悟；懂
-  + 14世纪中期，“理解，理解，通过理解掌握”，14世纪后期，“包括； 包括”； 来自拉丁语 *comprehendere* “一起拿，团结； 包括； 抓住”（着火或逮捕罪犯）； 还“理解，感知”（在头脑中抓住或接受），来自 ***com* “一起，一起”，这里可能是“完全”**（见 [com-](https://www.etymonline.com/cn/word/com-)) + *prehendere* “抓住，抓住”。
+  + com应该指的是对知识点都理解了
+  + 14世纪中期，“**理解，理解，通过理解掌握**”，14世纪后期，“包括； 包括”； 来自拉丁语 *comprehendere* “一起拿，团结； 包括； 抓住”（着火或逮捕罪犯）； 还“理解，感知”（在头脑中抓住或接受），来自 ***com* “一起，一起”，这里可能是“完全”**（见 [com-](https://www.etymonline.com/cn/word/com-)) + *prehendere* “**抓住，抓住**”。
+  + 比understand意义要强一点 
 
 
 
 + reprehensible
   + **adj.**不道德的；应受指责的；应受谴责的
+  + 往回抓，不道德的人应该抓回来
   + "**应受谴责的，应该受到指责的**"，14世纪晚期，源自14世纪的古法语 *reprehensible*，直接源自晚期拉丁语 *reprehensibilis* "**可指责的**"，来自拉丁语 *reprehens-* 的过去分词词干 *reprehendere* "**责备，指责，斥责； 抓住，约束**"（参见 [reprehend](https://www.etymonline.com/cn/word/reprehend)）。中世纪14世纪中叶的 ***Reprehendable*** 也有相同的意思。*Reprehendatory*（1853年）在"传达责备"的意义上使用。
 
 
@@ -250,6 +260,10 @@ Latin verb prehendere
 ### TEMPER - "to moderate" or "keep within limits" or "to mix"
 
 Latin verb temperare
+
+moderate：调和，使平和，使缓和，保持一个中间的状态，有点像clamp
+
+temperature：为什么是温度呢？其实指的是人体内各种因素混杂的状态，使人体平衡 
 
 + temper
   + **n.**脾气；情绪；心情；性情
@@ -265,6 +279,7 @@ Latin verb temperare
 
 
 + intemperate
+  + **in-**: 在形容词前面表示否定，动词前表示进入深入
   + **adj.**放纵的；无节制的；酗酒的
   + "**沉溺于激情或欲望的过度放纵**"，14世纪晚期，源自拉丁语 *intemperatus* "**过度的，不节制的**"，由 *in-* "**不，相反**"（见 [in-](https://www.etymonline.com/cn/word/in-)（1））和 *temperatus* "**受限制的，调节的，有限制的，适度的，冷静的，稳定的**" 组成，是 *temperare* "**调节**" 的过去分词（见 [temper](https://www.etymonline.com/cn/word/temper)（v.））。
 
@@ -272,8 +287,10 @@ Latin verb temperare
 
 + distemper
   + **v.**用胶画颜料画；用胶画颜料涂(壁等)；用胶状物调制(颜料)
-  + **n.**瘟热（动物，尤指猫、狗的传染病）；刷墙水粉；水浆涂料；水性墙漆
+  + **n.****瘟热**（动物，尤指猫、狗的传染病）；刷墙水粉；水浆涂料；水性墙漆
+  + 瘟：温度失常
   + 14世纪晚期， *distemperen*，“**扰乱，打破适当的平衡**”，源自古法语 *destemprer*，直接源自中世纪拉丁语 *distemperare* “烦扰，使不适”，字面意思是“**打破身体体液的适当平衡**”，由 ***dis-* “不，非”**（见 [dis-](https://www.etymonline.com/cn/word/dis-))和拉丁语 ***temperare* “按适当比例混合”**（见 [temper](https://www.etymonline.com/cn/word/temper)（v.））组成。
+  + dis/dys
 
 
 
