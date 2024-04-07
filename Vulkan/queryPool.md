@@ -33,7 +33,7 @@ GPU Query的分类：
 
 + `TimeStamp Query`: 通过在一个某个函数调用前后写入一个TimeStamp，然后通过计算其两个TimeStamp之间的差值得到本次**函数调用开销**。
 + `Occlusion Query`：会跟踪通过一组Draw Command的通过Fragment Test的Sample数量。因此Occlusion Queries只适用于支持图形操作的Queue。应用程序可以使用这些结果来影响未来的渲染决策(比如一些物体可以不渲染等等)。(在每个Fragment中，Coverage Value为1的每个Smaple点，如果能通过所有的Fragment Test(包括Scissor、Exclusive Scissor、Sample Mask、Alpha To Coverage,、Depth/Stencil Test)Occlusion Query的 Sample计数器就会增加1。)
-+ `Pipeline Statistics Query`：可以让应用程序对一组指定的VkPipeline计数器进行采样。当开启Pipeline Statistics Query时这些计数器可以为一组Draw/Dispatch递增。因此Pipeline Statistics Query在支持图形或计算的Queue上是可用的。可以借助Pipeline Statistics Query来统计比如Vertex/Tessellation/Fragment Shader的调用次数等等，这些数据都有助于我们**定位性能问题**。
++ `Pipeline Statistics Query`：可以让应用程序对一组指定的VkPipeline计数器进行采样。当开启Pipeline Statistics Query时这些计数器可以为一组Draw/Dispatch递增。因此Pipeline Statistics Query在支持图形或计算的Queue上是可用的。可以借助Pipeline Statistics Query来统计比如Vertex/Tessellation/Fragment Shader的**调用次数**等等，这些数据都有助于我们**定位性能问题**。
 + `Performance Query`：可以为应用程序提供了一种机制以获得关于Command Buffer、RenderPass和其他Command执行的性能计数器。
 
 
@@ -315,4 +315,373 @@ float delta_in_ns = float(time_stamps[1] - time_stamps[0]) * device_limits.times
 #### 前置检查
 
 对于Occlusion Query来说应该PC和移动端全部是支持的。但是有一个`occlusionQueryPrecise`字段会控制在Occlusion Query中会**返回实际通过的Sample数量**。这种类型的Query可以在`vkCmdBeginQuery`的flags参数中启用`VK_QUERY_CONTROL_PRECISE_BIT`。如果不支持这个功能，那么当有任何Sample通过时该Occlusion Query只会返回一个布尔值。
+
+
+
+#### 开始查询
+
+接下来看看如何完成Occlusion Query吧，和上面的TimeStamp Query不同这里需要的使用到是`vkCmdBeginQuery`和`vkCmdEndQuery`。Occlusion Query只会对在指定`Command Buffer`内`vkCmdBeginQuery`和`vkCmdEndQuery`之间记录的Command有效果，可以对一组DrawCall进行查询。
+
+vkCmdBeginQuery和vkCmdEndQuery所需参数如下:
+
+- `commandBuffer`指定完成该`Record Command`的`Command Buffer`。
+- `queryPool`指定该次`Query`结果存储在哪个`Query Pool`里面。
+- `query`指定本次开启的`Query`的索引。
+
+`vkCmdBeginQuery`和`vkCmdEndQuery`的参数基本一致但是只有一个`VkQueryControlFlags`字段`flag`有所不同，如果开启了`occlusionQueryPrecise`能力，并且在`vkCmdBeginQuery`的调用中flag参数设置为`VK_QUERY_CONTROL_PRECISE_BIT`。本次Occlusion Query便会**返回具体的Sample Count**而不是一个布尔值。
+
+
+
+Occlusion Query的例子：
+
+```c++
+{
+    // Occluder first
+    draw(command_buffer);
+    // Teapot
+    vkCmdBeginQuery(command_buffer, queryPool, 0, VK_FLAGS_NONE);
+    draw(command_buffer);
+    vkCmdEndQuery(drawCmdBuffers[i], queryPool, 0);
+    // Sphere
+    vkCmdBeginQuery(dcommand_buffer, queryPool, 1, VK_FLAGS_NONE);
+    draw(command_buffer);
+    vkCmdEndQuery(command_buffer, queryPool, 1);
+}
+```
+
+需要注意，调用vkCmdBeginQuery和vkCmdEndQuery**必须在RenderPass实例的同一个SubPass内开始和结束或者必须在RenderPass实例之外开始和结束**（即包含整个RenderPass实例）。
+
+在 Vulkan 中，Occlusion Query 被用来确定一个渲染操作中有**多少个片段（或者说像素）**实际上**被写入到了帧缓冲区**。它主要用于性能优化，比如决定是否需要渲染一个复杂的物体，如果该物体在当前视角下被其他物体遮挡，那么可能就不需要渲染了。
+
+Occlusion Query 通常用于**下一帧或之后帧**中的决策。例如，你可以在第一帧中对一个可能很复杂的物体进行渲染和遮挡查询，**基于查询结果决定在后续帧中是否需要再次渲染该物体**。如果该物体在当前视角下基本不可见（即 Occlusion Query 返回的通过样本数很低或为零），那么在接下来的几帧里，你可以选择不渲染这个物体，从而节省大量的渲染资源。
+
+Occlusion Query 的结果也可以用于实现一些更高级的渲染技术，比如**延迟渲染**（Deferred Rendering）中的**灯光剔除**（Light Culling）。在这种情况下，渲染每个光源之前使用 Occlusion Query 可以帮助确定光源是否真的对最终图像有贡献，如果一个光源完全被遮挡，那么它的光照计算就可以被跳过。
+
+还有一种情况是利用**分层渲染**（Hierarchical Rendering）或类似的技术，**先渲染一个对象的简化版本**（比如低多边形模型或边界盒），并使用 Occlusion Query 来检测它。**如果简化模型都被遮挡了**，那么就**没有必要渲染该对象**的高精度模型。
+
+
+
+#### 获取结果
+
+与timestamp一样
+
+ #### 流程
+
+![](./images/occlusionQueryFlow.png)
+
+#### 视角快速移动导致的物体闪烁的问题
+
+由于Occlusion Query基于先前帧的结果来做出决策，可能会导致所谓的“**时间滞后**”效应，即根据之前帧的遮挡查询结果决定不渲染某些物体，而在当前帧中这些物体实际上应该是可见的。
+
+解决办法：
+
++ 预测和插值
+
++ 延迟遮挡决策：利用前几帧query的结果来判断当前帧是否渲染该物体，例如假如前几帧query都是零那么当前帧可以选择不渲染。
++ 分级细节（LOD）和简化模型
++ 使用更宽松的遮挡查询标准
+
+
+
+### Pipeline Statistics Query
+
+#### 前置检查
+
+Pipeline Statistics Query并不是所有的机型都会支持，所以需要先检测该机型是否支持该能力。可以通过`VkPhysicalDeviceFeatures::pipelineStatisticsQuery`字段来判断该机型是否支持Pipeline Statistics Query。
+
+```c++
+VkPhysicalDeviceProperties properties;
+vkGetPhysicalDeviceProperties(physical_device, &properties);
+if(!properties.pipelineStatisticsQuery){
+        throw std::runtime_error{"The selected device does not support Pipeline Statistics Query!"};
+}
+```
+
+
+
+#### 使用
+
+Pipeline Statistics Query的使用和Occlusion Query大致相同，但是有一个特殊的点。在创建QueryPool的时候需要在`VkQueryPoolCreateInfo`中设置`pipelineStatistics`字段，这个字段代表需要查询的是不同的`Pipeline Stage`的调用次数。比如下面这个QueryPool就是查询顶点着色器和曲面细分着色器的调用次数。
+
+```c++
+VkQueryPoolCreateInfo query_pool_info = {};
+query_pool_info.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+query_pool_info.queryType = VK_QUERY_TYPE_PIPELINE_STATISTICS;
+query_pool_info.pipelineStatistics =
+    VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT |
+    VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT;
+query_pool_info.queryCount = 2;
+vkCreateQueryPool(get_device().get_handle(), &query_pool_info, NULL, &query_pool);
+```
+
+通过调用`vkCmdBeginQuery`和`vkCmdEndQuery`分别代表开始和结束一个`Pipeline Statistics Query`。当一个Pipeline Statistics Query开始时，所有的计数器被设置为零。**如果一个计数器是在不支持相应操作的Command Buffer上发出的，那么在本次Query会被设置为可用后，但是该计数器的值就无法定义**。必须启用至少一个与记录Command Buffer上支持的操作相关的计数器。Pipeline Statistics Query和Occlusion Query使用方式基本一致，如下所示：
+
+```c++
+vkCmdBeginQuery(command_buffer, queryPool, 0, VK_FLAGS_NONE);
+    draw(command_buffer);
+vkCmdEndQuery(drawCmdBuffers[i], queryPool, 0);
+```
+
+
+
+#### 获取结果
+
+和上面TimeStamp Query基本保持一致，不再重复赘述。
+
+
+
+#### 整体流程
+
+和Occlusion Query基本一致不再重复。
+
+
+
+### Performance Query
+
+#### 前置条件
+
+首先是想要使用Performance Query必须**开启**`VK_KHR_performance_query`这个**设备扩展**，这是最前置的一个条件，其次还需要**查询硬件是否有Performance Query这个功能**，可以通过以下方式来查询：
+
+```c++
+VkPhysicalDevicePerformanceQueryFeaturesKHR perf_query_features{};
+perf_query_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR;
+
+VkPhysicalDeviceFeatures2KHR device_features{};
+device_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
+device_features.pNext = &perf_query_features;
+
+// 使用vkGetPhysicalDeviceFeatures2来查询，表明VK_KHR_get_physical_device_properties2是VK_KHR_performance_query的前提。
+vkGetPhysicalDeviceFeatures2(physical_device, &device_features);
+// 判断performanceCounterQueryPools是否为true
+if (!perf_query_features.performanceCounterQueryPools)
+{
+	return false;
+}
+```
+
+上面是查询具体某个扩展的某些功能是否可用。
+
+下面是查询是否支持某个扩展。
+
+```c++
+VkPhysicalDevice* physicalDevices;
+uint32_t deviceCount = 0;
+
+// 第一步：获取物理设备数量
+vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+
+// 分配数组以容纳物理设备
+physicalDevices = new VkPhysicalDevice[deviceCount];
+
+// 获取物理设备列表
+vkEnumeratePhysicalDevices(instance, &deviceCount, physicalDevices);
+
+// 遍历所有物理设备
+for (uint32_t i = 0; i < deviceCount; i++) {
+    uint32_t extensionCount;
+    // 第二步：获取每个设备支持的扩展数量
+    vkEnumerateDeviceExtensionProperties(physicalDevices[i], nullptr, &extensionCount, nullptr);
+
+    // 分配数组以容纳所有扩展
+    VkExtensionProperties* extensions = new VkExtensionProperties[extensionCount];
+
+    // 获取扩展列表
+    vkEnumerateDeviceExtensionProperties(physicalDevices[i], nullptr, &extensionCount, extensions);
+
+    // 第三步：遍历扩展，检查 VK_KHR_performance_query 是否存在
+    for (uint32_t j = 0; j < extensionCount; j++) {
+        if (strcmp(extensions[j].extensionName, "VK_KHR_performance_query") == 0) {
+            // 支持 VK_KHR_performance_query 扩展
+            // 在这里做你需要的操作
+            break;
+        }
+    }
+
+    delete[] extensions;
+}
+
+delete[] physicalDevices;
+
+```
+
+首先可以通过调用 vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR **查询可用的Performance Query计数器有多少个**，如果为零则不支持Performance Query。 并且通过该接口可以获取到Performance Query计数器的具体信息，如下所示：
+
+```c++
+uint32_t count = 0;
+vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
+    physical_device,
+    queue_family_index,
+    &count,
+    nullptr, 
+    nullptr
+);
+
+if (count == 0)
+{
+    throw std::runtime_error{"The selected physical_device does not support Performance Query!"};
+}
+
+std::vector<VkPerformanceCounterKHR>            counters(count);
+std::vector<VkPerformanceCounterDescriptionKHR> descs(count);
+
+for (uint32_t i = 0; i < count; i++)
+{
+    counters[i].sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_KHR;
+    counters[i].pNext = nullptr;
+    descs[i].sType    = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_KHR;
+    descs[i].pNext    = nullptr;
+}
+// 获取到所有的Performance Query计数器信息
+vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
+    physical_device,
+    queue_family_index, 
+    &count,
+    counters.data(), 
+    descs.data()
+);
+```
+
+在这里还有一个问题，那就是关于`Performance Query`计数器描述`VkPerformanceCounterDescriptionKHR`结构体中包含一个flags参数。假如该flag参数为`VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR`，则表明该`Performance Query`计数器会十分损耗性能。可以选择避免统计该数据，并且通过descs的信息可以筛选出所需要的统计数据然后获取到对应的计数器的索引。以便在后续的创建Performance Query Pool指定对应的计数器。
+
+关于Performance Query还有一个特殊的前置需要，那就是Profiling Lock。如果要记录和提交一个包含Performance Query的Command Buffer就一定需要Profiling Lock。其中`VkAcquireProfilingLockInfoKHR::timeout`表示如果Profiling Lock不可用则该函数会等待多长时间，单位是纳秒。
+
+```c++
+VkAcquireProfilingLockInfoKHR info{};
+info.sType   = VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR;
+info.timeout = 2000000000; // 消耗2s
+if (vkAcquireProfilingLockKHR(device.get_handle(), &info) != VK_SUCCESS)
+{
+            throw std::runtime_error{"The selected device does not support ProfilingLock!"};
+}
+```
+
+
+
+#### 创建Performance Query Pool
+
+在上面通过`vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR`获取到所有的计数器描述后，可以筛选出想要的计数器。现在建立一个Query Pool来收集这些计数器的数据。在这里首先需要检查这些计数器是否可以一次性收集，如果**需要多次收集会对性能产生很大的影响**。首先需要填充`VkQueryPoolPerformanceCreateInfoKHR`结构体。如下所示：
+
+- queueFamilyIndex是用于创建这个Performance Query Pool的Query Family Index。
+- counterIndexCount是pCounterIndices数组的长度。
+- pCounterIndices是指向`vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR::pCounters`的索引数组的指针，以便确定在这个Performance Query Pool中启用的计数器是哪些。
+
+```c++
+typedef struct VkQueryPoolPerformanceCreateInfoKHR {
+    VkStructureType    sType;
+    const void*        pNext;
+    uint32_t           queueFamilyIndex;
+    uint32_t           counterIndexCount;
+    const uint32_t*    pCounterIndices;
+} VkQueryPoolPerformanceCreateInfoKHR;
+```
+
+之后通过`vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR`来查询是否这些计数器可以一次性统计完毕。
+
+```c++
+uint32_t passes_needed;
+vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(physical_device, perf_query_create_info,&passes_needed);
+if (passes_needed != 1)
+{
+    // Needs more than one pass, remove all our supported stats
+    throw std::runtime_error{"Requested Vulkan stats require multiple passes, we won't collect them"};
+}
+```
+
+接下来就可以真正创建QueryPool啦，在这里需要将VkQueryPoolPerformanceCreateInfoKHR传入到VkQueryPoolCreateInfo的pNext当中。
+
+```c++
+VkQueryPoolCreateInfo pool_create_info{};
+pool_create_info.sType      = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+pool_create_info.pNext      = &perf_create_info;
+pool_create_info.queryType  = VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR;
+......
+VkQueryPool query_pool;
+vkCreateQueryPool(device, &pool_create_info, nullptr, &query_pool)
+```
+
+到这里使用`Performance Query` 的`Query Pool`就已经创建完毕啦，可以开始使用`Performance Query`啦！
+
+#### 使用
+
+在这里还是通过`vkCmdBeginQuery`和`vkCmdEndQuery`来完成Performance Query和前面的Query基本一致，不过`Performance Query`有一些特殊的点需要注意。在这里Performance Query并不需要在每次调用`vkCmdBeginQuery`之前调用一次`vkCmdResetQueryPool`(也就是重置Query Pool)。这对于Performance Query是无效的。
+
+并且在调用`vkCmdEndQuery`之前还添加一个PipelineBarrier，保证其前一个Command 完全执行完毕，但也不用担心后续的Command会被堵塞，这是设置的Pipeline Stage是`BOTTOM_OF_PIPE_BIT`。如下所示：
+
+```c++
+vkCmdBeginQuery(command_buffer, query_pool, ....);
+.....
+draw()
+.....
+vkCmdPipelineBarrier(command_buffer,
+                             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                             0, 0, nullptr, 0, nullptr, 0, nullptr);
+vkCmdEndQuery(command_buffer, query_pool, ...);
+```
+
+在这里就确定了Performance Query的统计数据范围啦！
+
+#### 获取结果
+
+接下来是获取Performance Query的结果，Performance Query的结果以一个VkPerformanceCounterResultKHR数组的形式返回，其中包含与Query中的每个计数器相关的数据，其存储顺序与创建Performance Query时在pCounterIndices中提供的计数器顺序一致。
+
+```c++
+VkDeviceSize stride = sizeof(VkPerformanceCounterResultKHR) * counter_indices.size();
+std::vector<VkPerformanceCounterResultKHR> results(counter_indices.size());
+vkGetQueryPoolResults(device, query_pool,0,1,results.size() * sizeof(VkPerformanceCounterResultKHR),
+                                         results.data(), stride, VK_QUERY_RESULT_WAIT_BIT)
+```
+
+到此为止`Performance Query`的结果也获取到啦！可以通过之前获取到的计数器信息也就`VkPerformanceCounterKHR::storage`字段来确定计数器中数据的位数，然后完成解析。
+
+```c++
+VkPerformanceCounterResultKHR result;
+VkPerformanceCounterStorageKHR stroage;
+switch (storage)
+    {
+        case VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR:
+            return static_cast<double>(result.int32);
+        case VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR:
+            return static_cast<double>(result.int64);
+        case VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR:
+            return static_cast<double>(result.uint32);
+        case VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR:
+            return static_cast<double>(result.uint64);
+        case VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR:
+            return static_cast<double>(result.float32);
+        case VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR:
+            return (result.float64);
+        default:
+            assert(0);
+            return 0.0;
+    }
+```
+
+#### 整体流程
+
+![](./images/performanceQuery.png)
+
+### GPU Query 优化
+
+#### 避免使用全局Query Pool
+
+可能在实践中会使用一个全局的Query Pool，然后多帧都在同一个Query Pool中操作(比如写入TimeStamp，Occlusion Query之类的)，这样会造成频繁的调用vkGetQueryPoolResults和vkResetQueryPool这些接口，如下所示，可以看出使用一个全局Query Pool会导致多次调用，性能不佳。
+
+![](./images/optimizeQuery.png)
+
+所以推荐的方案是**每帧都单独持有一个Query Pool**，因为每帧的GPU Query可以很明确的通过一次性获取到多个Query的结果，这样的处理方式可以大大减少vkGetQueryPoolResults和vkResetQueryPool的调用次数。如下所示：
+
+![](./images/optimizeQuery1.png)
+
+
+
+### 支持情况
+
+Occlusin Query 基本是全覆盖的情况，这个功能在很早就已经出现了，PC和移动端都可以正常使用。
+
+TimeStamp Query在PC端基本全覆盖，在移动端覆盖率70%的覆盖率，使用需谨慎。
+
+Pipeline Statistics Query在PC端基本全覆盖，在移动端覆盖率30%的覆盖率，在移动端基本不可用状态。
+
+Performance Query 在PC段的覆盖率很低，在移动端完全不支持。
 
