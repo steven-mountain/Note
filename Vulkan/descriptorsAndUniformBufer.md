@@ -65,6 +65,8 @@ descriptor：一种shader可以自由获取资源（buffers，images）的方式
 
 
 
+![](./images/descriptorRelationShip.png)
+
 
 
 #### 和vertex中的description的比较

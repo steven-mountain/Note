@@ -19,7 +19,7 @@ TLAS通过一个3x4的变换矩阵来定位的BLAS构建的整个场景。
 
 
 
-#### BLAS
+### BLAS
 
 将OBJ模型的几何数据分解为多个AS builder。其实现依赖于将数据传输给`vkCmdBuildAccelerationStructuresKHR`来构建顶层和底层加速结构。
 
@@ -131,6 +131,14 @@ BLAS 压缩可能会导致一些精度损失，这需要仔细权衡压缩率和
 ![](./images/BLASBUILD.png)
 
 
+
+### TLAS
+
+顶层加速结构（Top-Level Acceleration Structure，简称 TLAS）**充当了光线追踪场景描述的入口点**。它**不直接存储场景中的几何体数据**，而是存储对底层加速结构（Bottom-Level Acceleration Structures，简称 BLAS）的**实例的引用**。每个 BLAS 包含具体的几何体数据，如三角形网格。TLAS 通过引用这些 BLAS 实例，以及实例的变换信息，来组织整个场景。
+
+```
+VkAccelerationStructureInstanceKHR
+```
 
 
 

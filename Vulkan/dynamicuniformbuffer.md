@@ -407,7 +407,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
 	}
 ```
 
-+ 重点（敲黑板！！！）
++ **重点（敲黑板！！！）**
 
 一个bindingpoint上可以是一个descriptor Array，所以在我们的shader中应该是这样的
 
@@ -419,7 +419,7 @@ layout(binding = 0) uniform UniformBufferObject{
     mat4 projection;
 }ubo[]; // 一个binding point上可以是一个 descriptor array
 
-layout(binding = 1) uniform UboInstance{
+layout(binding = 1) uniform UboInstance{ // 当你在 Uniform 缓冲区定义中使用 [] 时，这表示你正在定义一个数组。
     mat4 model;
 }uboInstance[];
 
