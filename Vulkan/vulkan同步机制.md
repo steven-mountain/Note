@@ -127,6 +127,12 @@ pipeline stages（TOP_OF_PIPE, DRAW_INDIRECT, COMPUTE/TRANSFER, BOTTOM_OF_PIPE�
 
 需要弄清两个概念，momeory available和 visible。
 
+
+
+`VkMemoryBarrier` 用于**同步不同管线阶段之间对所有内存的访问**，确保在屏障之前的内存写操作完成后，屏障之后的内存读操作才能开始。它是一种确保内存操作顺序的高层次同步机制。
+
+
+
 当L2cache包含所有最新的数据，那么我们就可以说memory是available的。L2与所有的L1相连。L1是不连续的。每一个GPU核心都有一系列的L1缓存。将pipeline stage + access mask结合来使用。当memory可用时（也就是L2中的数据是最新的数据的时候）memory 对于特定 stage + access mask 可见。
 
 这个老哥对available和visible的通俗的理解是：

@@ -122,3 +122,23 @@ Vulkan 要求开发者**显式管理 CPU 和 GPU 之间的交互**，包括资�
 2. **硬件执行层面的顺序**：尽管命令是按顺序提交的，但 GPU 可能并不总是严格按照这个顺序执行它们。GPU 设计为高度并行的处理器，它**可能会重排一些操作或同时执行多个操作**，以优化性能和资源利用率。这种优化是在**不违反数据依赖性的前提**下进行的。比如，如果两个绘制调用之间没有直接的数据依赖关系，GPU 可能会选择并行执行它们。
 
 command buffer记录的是 `vkCmd*`的命令。
+
+
+
+### 8、gl_InstanceID和gl_InstanceCustomIndex
+
++ gl_InstanceID
+
+`gl_InstanceID` 是一个在图形和计算管线中广泛使用的**内置变量**。在图形管线的顶点着色器中，`gl_InstanceID` 提供了当前实例的索引，这对于实例化渲染非常有用。**实例化渲染**允许你用不同的参数（如变换矩阵）多次绘制相同的几何体，每次绘制称为一个“实例”。`gl_InstanceID` 从 0 开始，为每个实例提供了一个唯一的索引，使着色器能够根据实例索引访问实例特定的数据，如不同的变换矩阵。
+
++ gl_InstanceCustomIndex
+
+`gl_InstanceCustomIndex` 是在 **Vulkan 射线追踪管线中引入的一个新的内置变量**。当执行射线追踪时，`gl_InstanceCustomIndex` 提供了与当前相交的 `VkAccelerationStructureInstanceKHR` 相关联的**自定义索引值**。这个自定义索引值是在构建顶层加速结构（TLAS）时，通过 `VkAccelerationStructureInstanceKHR` 结构体中的 `instanceCustomIndex` 字段指定的。`gl_InstanceCustomIndex` 允许你在着色器中根据每个实例的自定义索引执行不同的逻辑，比如使用不同的材质或处理不同类型的对象。
+
++ 区别
+
+  - **使用上下文**：`gl_InstanceID` 主要用于**传统的图形管线中的实例化**渲染，而 `gl_InstanceCustomIndex` 专门用于 Vulkan 射线追踪管线。
+
+  - **值的来源**：`gl_InstanceID` 是**由渲染管线自动生成**的，表示实例的索引；`gl_InstanceCustomIndex` 则由开发者在构建 TLAS 时通过 `VkAccelerationStructureInstanceKHR` **明确指定**。
+
+  - **用途**：`gl_InstanceID` 通常用于**访问每个实例的特定资源**，如实例化数组中的变换矩阵；`gl_InstanceCustomIndex` 则用于射线追踪中**根据实例执行特定的着色逻辑**，这可以基于构建 TLAS 时分配给实例的自定义值。
