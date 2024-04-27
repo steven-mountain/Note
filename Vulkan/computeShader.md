@@ -195,6 +195,13 @@ block大小的选择：
    - 8 blocks x 96 threads
 4. **32的倍数**：还有一种说法，就是开的 thread per block 数应该尽可能是 32 的 倍数 ，好像 GPU 硬件层面开的时候，都是按 32 的倍数开的。
 
+### 工作组大小的选择
+
+- 每个平台和GPU对工作组的大小有不同的最大限制。在 Vulkan 中，可以通过查询 `VkPhysicalDeviceLimits` 的 `maxComputeWorkGroupSize` 和 `maxComputeWorkGroupInvocations` 来获得工作组大小的硬件限制。
+- 通常，一个较大的工作组可以提供更多的并行度，但也可能导致资源竞争和效率降低。
+
+- GPU中的每个SM拥有固定数量的寄存器和共享内存。这些资源在SM上的所有线程间共享。当每个线程使用的资源量增加时，同一SM上能够同时运行的线程数量就会减少。
+
 
 
 ### 执行compute
