@@ -90,6 +90,31 @@ docker run -dit 镜像名 /bin/bash
 
 
 
+#### 1.7 docker-compose配置
+
+```bash
+#version: "3.9"
+services:
+  MitSuba:
+    image: ubuntuminiconda:v1
+    user: "root"
+    container_name: "MitSuba"
+    volumes:
+      - "/mnt/z/722/hermesjang/Mitsuba:/outData"
+    deploy:
+      resources:
+          reservations:
+              devices:
+                  - driver: "nvidia"
+                    count: "all"
+                    capabilities: ["gpu"]
+    tty: true 
+```
+
+一般写法如上，其中`tty: true`是为了保证容器能够后台运行
+
+
+
 ### 2 Linux 基本指令集合
 
 #### 2.1 Linux 基本知识

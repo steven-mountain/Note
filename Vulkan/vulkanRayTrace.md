@@ -203,7 +203,7 @@ descriptor set来连接 TLAS 以及shader最后要输出的image（VK_DESCRIPTOR
 
 
 
-### SBT（Shader Binding Table）
+### Ray Tracing Pipeline
 
 为什么要有？
 
@@ -241,6 +241,10 @@ descriptor set来连接 TLAS 以及shader最后要输出的image（VK_DESCRIPTOR
 
   - **操作**：分配一个具有 `VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR` 使用标志的缓冲区，然后将步骤5中查询到的着色器句柄复制到此缓冲区中。这个缓冲区即为着色器绑定表，它在光线追踪渲染中用于快速索引和调用着色器。
 
+![](./images/rayTracingShaders.png)
+
+
+
 ### 5种shader
 
 #### ray generation
@@ -273,6 +277,64 @@ descriptor set来连接 TLAS 以及shader最后要输出的image（VK_DESCRIPTOR
 
 
 
+#### intersection
+
+1. **用户定义几何体的交互**：
+   - 交点着色器允许光线与用户定义的几何体进行交互。这意味着开发者可以定义自己的算法来决定光线如何与特定的几何形状相交，而不仅限于标准的几何体形状。
+2. **用途示例**：
+   - **按需加载几何体**：交点着色器可以用于实现几何体占位符的交叉检测，这对于按需加载几何体特别有用。在这种情况下，真实的几何体数据可以在确定光线与其占位符相交后才被加载到内存中。
+   - **过程生成几何体**：对于过程生成的几何体，如通过数学公式动态生成的形状，交点着色器可以用来直接计算光线与这些形状的交点，而无需事先对它们进行细分（tessellating）。
+3. 对加速结构的影响
+   + 使用交点着色器可能**需要修改加速结构**（如 BVH - Bounding Volume Hierarchies）的构建方式。因为标准的加速结构构建假设使用简单的几何体交叉测试，而交点着色器允许更复杂的交互定义，这可能影响整个加速结构的效率和组织。
+
+如果不设置，那么硬件将直接处理交点检测。
+
+
+
+#### any hit
+
+1. **处理潜在交点**：
+
+   - 当光线从起点发射并穿过场景时，可能会遇到多个物体的交点。任意命中着色器**会在每个这样的潜在交点上执行**，而不仅仅是最终的交点。
+   - 这使得任意命中着色器成为评估和处理所有潜在交点的理想位置。
+
+2. **高效实现 Alpha 测试**：
+
+   - 任意命中着色器经常用于**实现 alpha 测试**（透明度测试）。在这种情况下，如果一个交点的材质是部分透明的（例如纹理的某些部分是透明的），着色器可以检查 alpha 值决定是否“忽略”这个交点。
+   - 如果 alpha 测试失败（表示该点应透明），则可以继续光线遍历，寻找下一个交点，而不必重新启动整个光线追踪过程。
+
+3. **光线遍历的继续**：
+
+   - 当任意命中着色器**决定当前交点不符合条件**（例如，通过了 alpha 测试）时，它可以允许光线继续遍历，寻找更接近的或其他有效的交点。
+   - 这种能力显著**提高了渲染效率**，特别是在处理复杂场景或具有多层透明材质的场景中。
+
+4. 内置的任意命中着色器
+
+   - 如果没有显式定义任意命中着色器，许多光线追踪实现会提供一个**默认**的“通透”任意命中着色器。这个默认的着色器通常**仅将交点信息返回给遍历引擎**，而不做任何处理。
+
+   - 遍历引擎随后负责确定所有记录的交点中哪一个最接近光线的起点。
+
+ps：如果不设置，默认是内置的 **pass-through** 着色器通常不会改变传入的交点数据，它只是简单地验证交点并将控制权传递给其他着色器，如最近命中着色器或未命中着色器。
+
+
+
+ps：在光线追踪渲染管线中，各个shader触发的顺序是任意的，但是依旧保留了 ”stages“这一从传统光栅化中出来的结果。
+
+
+
+### 着色器组类型
+
+- **当类型是 `VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR`**：
+  - 这种类型的着色器组专用于那些**不直接与几何体交互**的着色器任务，如**光线生成、未命中**处理和可调用着色器。
+  - 在这种情况下，`generalShader` 字段用于指定该组中活跃的着色器的索引。这个索引应该对应于在创建光线追踪管线时提供的 `VkPipelineShaderStageCreateInfo` 数组中的某个着色器。
+  - 例如，如果你有一个光线生成着色器，并且它在 `VkPipelineShaderStageCreateInfo` 数组中的索引是 0，那么在相应的 `VkRayTracingShaderGroupCreateInfoKHR` 结构中，你应该将 `generalShader` 设置为 0。
+- **当类型是 `VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR` 或 `VK_RAY_TRACING_SHADER_GROUP_TYPE_PROCEDURAL_HIT_GROUP_KHR`**：
+  - 对于**处理命中事件**的着色器组（包括**最近命中**着色器、**任意命中**着色器和**交点**着色器），`generalShader` 字段通常设置为 `VK_SHADER_UNUSED_KHR`，因为这些类型的组专门处理与几何体的交互，不使用通用着色器。
+
+
+
+
+
 ### 有效负载的声明和使用
 
 1. **声明有效负载**:
@@ -291,3 +353,18 @@ descriptor set来连接 TLAS 以及shader最后要输出的image（VK_DESCRIPTOR
 
 GPU中的每个SM拥有固定数量的寄存器和共享内存。这些资源在SM上的所有线程间共享。**当每个线程使用的资源量增加时**，同一SM上**能够同时运行的线程数量就会减少**。
 
+
+
+### SBT(Shader Binding Table)
+
+传统光栅化的思路：绘制与资源绑定
+
+光追：绘制与资源分离
+
+将实例与shader建立联系是在创建几何体时候就进行的。在TLAS中为每一个实例提供一个hitGroupID，决定了在绘制的时候启用具体哪一组id。
+
+如何计算entries之间的间距？
+
++ `PhysicalDeviceRayTracingPipelinePropertiesKHR::shaderGroupHandleSize`
++ `PhysicalDeviceRayTracingPipelinePropertiesKHR::shaderGroupBaseAlignment`
++ The size of any user-provided `shaderRecordEXT` data if used (in this case, no).

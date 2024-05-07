@@ -49,5 +49,24 @@ for(int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i){
 
 
 
+### 枚举默认值
 
+```c++
+enum StageIndices
+{
+    eRaygen,
+    eMiss,
+    eClosestHit,
+    eShaderGroupCount 
+};
+```
+
+
+
+在 C++ 中，枚举类型的值默认从 0 开始依次递增。给定的枚举 `StageIndices` 的各个成员的值将是：
+
+- `eRaygen` 的值是 0
+- `eMiss` 的值是 1
+- `eClosestHit` 的值是 2
+- `eShaderGroupCount` 的值是 3
 
