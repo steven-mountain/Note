@@ -203,6 +203,20 @@ descriptor set来连接 TLAS 以及shader最后要输出的image（VK_DESCRIPTOR
 
 
 
+### 为什么顶点和索引缓冲区在光线追踪中作为存储缓冲区？
+
+1. **非顺序数据访问**：
+   - 光线追踪着色器（如最近命中着色器）可能需要基于光线和物体交互的结果访问任意顶点数据，这种访问通常是非顺序的。
+   - 作为存储缓冲区，顶点和索引缓冲区可以支持着色器以任意方式读取或写入数据，这为复杂的数据交互提供了可能。
+2. **光线追踪中的加速结构需求**：
+   - 光线追踪技术使用加速结构（如 BVH - Bounding Volume Hierarchies）来高效地判定光线与场景中对象的交互。建立这些加速结构需要从顶点和索引缓冲区读取数据。
+   - 在构建加速结构时，需要将顶点和索引数据作为输入，这通常要求这些缓冲区配置为 `VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR`，表示它们在建立加速结构过程中只读。
+3. **设备地址的需求**：
+   - 光线追踪 API 通常需要直接访问设备内存地址。`VkAccelerationStructureGeometryTrianglesDataKHR` 结构用于指定加速结构构建过程中顶点和索引数据的来源，这要求相应的缓冲区能提供原始的设备地址。
+   - 因此，顶点和索引缓冲区还需要启用 `VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT`，以允许通过设备地址访问它们。
+
+
+
 ### Ray Tracing Pipeline
 
 为什么要有？
@@ -342,7 +356,7 @@ ps：在光线追踪渲染管线中，各个shader触发的顺序是任意的，
    - `rayPayloadEXT` 是用于声明一个可由**当前着色器**修改并**传递**给被调用着色器的有效负载。
    - `rayPayloadInEXT` 是用于**接收**来自调用着色器的有效负载的变量，也称为“incoming payload”。
 2. **着色器间的调用者/被调用者关系**:
-   - 这两种类型的有效负载变量建立了着色器间的调用者（caller）和被调用者（callee）关系。
+   - 这两种类型的有效负载变量建立了着色器间的调用者（caller）和被调用者（caller）关系。
    - 当一个着色器（调用者）调用 `traceRayEXT()` 函数时，它可以选择将其一个 `rayPayloadEXT` 变量传递给被调用的着色器。在被调用的着色器中，这个传递的有效负载变为 `rayPayloadInEXT` 变量。
 3. **局部复制**:
    - 每次着色器被调用时，它都会为其声明的 `rayPayloadEXT` 变量创建一个局部副本。这意味着每个着色器实例有其自己的有效负载数据副本，这些数据可以在着色器执行期间修改，不会影响其他着色器实例的有效负载数据。
@@ -359,6 +373,8 @@ GPU中的每个SM拥有固定数量的寄存器和共享内存。这些资源在
 
 传统光栅化的思路：绘制与资源绑定
 
+SBT里存储的是啥？是shader的**句柄**，何谓句柄，其实就是地址，或者是更抽象的地址，特性是绑定关系，即handle所引用的资源在内存中的地址发生了变化，依然可以通过handle去访问到改资源。即**handle与资源建立了一定的连接**，即使资源挪动了，依然可以通过handle访问到该资源。
+
 光追：绘制与资源分离
 
 将实例与shader建立联系是在创建几何体时候就进行的。在TLAS中为每一个实例提供一个hitGroupID，决定了在绘制的时候启用具体哪一组id。
@@ -366,5 +382,73 @@ GPU中的每个SM拥有固定数量的寄存器和共享内存。这些资源在
 如何计算entries之间的间距？
 
 + `PhysicalDeviceRayTracingPipelinePropertiesKHR::shaderGroupHandleSize`
+
 + `PhysicalDeviceRayTracingPipelinePropertiesKHR::shaderGroupBaseAlignment`
+
+  则是针对**单个句柄**的对齐。就是二维数组里的一维数组的内存对齐。这样可以使提升SBT表的读取速率
+
 + The size of any user-provided `shaderRecordEXT` data if used (in this case, no).
+
+SBT一般是一个二维数组，包括**raygen**，**miss**，**hit**，**callable**四个着色器组：其中raygen有且仅有一个，因此其size等于stride。
+
+**这里为什么要对齐呢？**对齐是因为硬件设计的问题。在多个显存颗粒表示一段连续的内存，都是在每个内存中的同样的位置存储数据的某一Byte，而一块内存里有8个bank也是同样的道理，我们可以利用同样的地址，来存取8个bank的数据，这样性能就提升了，如果没有内存对齐，那么这里就要计算其偏移量，就变慢了，增加了寻址的开销。
+
+对齐有两种：
+
++ SBT表内的一维数组的整体的对齐，这样取某一个数组就很快，不用位置偏移。
++ 一维数组内部，每个shadergroup handle所占居的空间进行内存对齐。
+
+<img src="./images/SBT.png" style="zoom:150%;" />
+
+
+
+之后就是从**Pipeline**中提取出**groups**的**handles**并将其填充到**SBTbuffer**中，SBTbuffer的大小为**handleSize * handleCount**。
+
+![](./images/SBTbuffer.png)
+
+在创建SBT表的时候，需要`VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT`，这个字段是用来允许着色器代码通过设备地址直接访问缓冲区数据。
+
+### camera matrices
+
++ 由于raygen shader需要camera信息，而`camera`的信息一般都是保存在`UBO`中的，因此UBObuffer的 usage一般还要加上`VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR`
+
++ `#extension GL_GOOGLE_include_directive : enable`，GLSL的拓展指令，允许GLSL着色器代码中使用`#include`指令。使得GLSL文件中**包含其他GLSL文件**。
++ 支持64位整数类型，需要启动扩展：`GL_EXT_shader_explicit_arithmetic_types_int64 : require`，require是强制启动，如果不支持则会报错，enable则是可选，如果不可用，程序也能运行下去。
++ `rayPayloadEXT`， 由被调用的hit和miss shader返回一些信息给调用ray trace的shader；`rayPayloadEXT`只是个**限定符**，并不是类型。
+
+#### raygen
+
++ 声明一个`rayPayloadEXT`，变量用于传递以及接收信息；
++ 归一化浮点像素坐标，`gl_LaunchIDEXT`包含当前渲染像素的坐标；`gl_LaunchSizeEXT`，表示屏幕空间尺寸；利用这者的信息可以计算出最终的结果。这里有一个tip，就是给`gl_LaunchIDEXT`的xy都加上0.5，使用像素中心来计算。
+
+```glsl
+onst vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5); // 这里加0.5使用像素中心来计算
+const vec2 inUV = pixelCenter/vec2(gl_LaunchSizeEXT.xy);
+vec2 d = inUV * 2.0 - 1.0;
+```
+
+
+
++ 计算光照的方向，这里使用的是世界空间坐标
+
+  ps：在计算机图形学里由4个空间
+
+  + 对象空间 * model = 世界空间
+  + 世界空间 * view = 相机空间
+  + 相机空间 * projection = 裁剪空间
+
+```glsl
+  traceRayEXT(topLevelAS, // acceleration structure
+          rayFlags,       // rayFlags
+          0xFF,           // cullMask
+          0,              // sbtRecordOffset
+          0,              // sbtRecordStride
+          0,              // missIndex
+          origin.xyz,     // ray origin
+          tMin,           // ray min range
+          direction.xyz,  // ray direction
+          tMax,           // ray max range
+          0               // payload (location = 0)
+  );
+```
+
