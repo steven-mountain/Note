@@ -452,3 +452,9 @@ vec2 d = inUV * 2.0 - 1.0;
   );
 ```
 
+关于`sbtRecordOffset`和`sbtRecordStride`以及`instanceShaderBindingTableRecordOffset`如何影响`traceRayEXT`选择具体的哪个`Hit shader`。
+
+![](./images/SBTHG.png)
+
+`rayPayloadEXT`的定位，是通过location的序号来确定的。具体可以查看一下[GLSL风格](https://developer.blender.org/docs/handbook/guidelines/glsl/)。整个location不必像光栅化那样输入与输出的location必须要匹配。
+
