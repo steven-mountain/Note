@@ -458,3 +458,8 @@ vec2 d = inUV * 2.0 - 1.0;
 
 `rayPayloadEXT`的定位，是通过location的序号来确定的。具体可以查看一下[GLSL风格](https://developer.blender.org/docs/handbook/guidelines/glsl/)。整个location不必像光栅化那样输入与输出的location必须要匹配。
 
+通过gltf创建加速结构：
+
+![](./images/gltf2as.png)
+
+对于场景中的资源，无论有多少个物体，最终都是将这些结果保存在一个**线性的buffer**上，然后通过（localOffset+globalOffset）找到最终的结果。而贴图也是如此，所有的模型的贴图都绑定在一块儿，同样也是通过偏移拿到结果。
