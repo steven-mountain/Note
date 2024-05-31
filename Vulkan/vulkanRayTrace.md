@@ -463,3 +463,40 @@ vec2 d = inUV * 2.0 - 1.0;
 ![](./images/gltf2as.png)
 
 对于场景中的资源，无论有多少个物体，最终都是将这些结果保存在一个**线性的buffer**上，然后通过（localOffset+globalOffset）找到最终的结果。而贴图也是如此，所有的模型的贴图都绑定在一块儿，同样也是通过偏移拿到结果。
+
+
+
+### RayQuery
+
+ray tracing 的两种实现方式之一，可以在任何着色器中使用。
+
+一般的步骤如下：
+
+```c++
+// Ray Query for shadow 
+vec3  origin    = i_worldPos;
+vec3  direction = L;  // vector to light
+float tMin      = 0.01f;
+float tMax      = lightDistance;
+
+// Initializes a ray query object but does not start traversal
+rayQueryEXT rayQuery; // 初始化
+rayQueryInitializeEXT(rayQuery, topLevelAS, gl_RayFlagsTerminateOnFirstHitEXT, 0xFF, origin, tMin, direction, tMax);
+
+// gl_RayFlagsTerminateOnFirstHitEXT 但由于使用了 gl_RayFlagsTerminateOnFirstHitEXT 标志，
+// 光线查询将在找到第一个相交点时自动终止。
+// 因此，即使没有在循环体内进行提交操作，光线查询在找到第一个相交点时会自动提交这个相交点并终止遍历。
+
+// Start traversal: return false if traversal is complete
+while(rayQueryProceedEXT(rayQuery))
+{
+}
+
+// Returns type of committed (true) intersection
+if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+{
+  // Got an intersection == Shadow
+  o_color *= 0.1;
+}
+```
+
