@@ -87,6 +87,8 @@ Greek
 + intercept
   + to stop, seize, or interrupt(something or someone) before arrival
   + ***inter-***, "between"
+  + vt.拦截，拦住; 截球; 截击; 拦阻
+  + n.（数学）截距; 截击，拦截; 截听; 拦截者
   + “取或夺取之间，顺便夺取”， A -> B, inter就是A 发给B的路程之间，C 给take占有了
 
 
@@ -99,6 +101,7 @@ Greek
     + 约于1300年， *perceiven*，“意识到，获得知识”，尤其是“通过直接经验来了解”
   + perception
     + **n.**感知；知觉；看法；洞察力
+  + *adj.*可感觉[感受]到的，可理解的，可认识的
 
 
 
@@ -108,6 +111,7 @@ Greek
   + ***sus*-**, "up"
   + something or someone that "takes up" or absorbs like sponge(海绵)
   + **adj.**敏感；易受影响（或伤害等）；过敏；好动感情的
+  + 源自拉丁语 **`suscipere`**（意为“承接、接受”），由 **`sub-`**（从下方） + **`capere`**（抓取、接受）构成，字面即“从下方托住”，引申为“被动接纳外界事物”
 
 
 

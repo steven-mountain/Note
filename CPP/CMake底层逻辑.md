@@ -13,6 +13,14 @@
 
 
 
+visual studio code底部出现控制bar？
+
+设置搜索：cmake.options.statusBarVisibility，设置为true
+
+output输出乱码？修改`output log encoding`值为 `UTF-8withBOM`
+
+
+
 + 需要知道用哪些库，以及这些库所在的位置。
 
 
