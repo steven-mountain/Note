@@ -6,36 +6,27 @@ unit 17
 
 an animal is a living, breathing thing
 
-
-
 + animated
   + **adj.**有生气的；活跃的；热烈的；兴致勃勃的
   + **v.**animate的过去式
   + **网络**动画；栩栩如生的；动画的
   + 1530年代，“活着的”，过去分词形容词来自 [animate](https://www.etymonline.com/cn/word/animate)（v.）。 “精神兴奋，活泼”的意思来自1530年代，“充满活力”的意思来自1580年代。移动图片的意义可追溯至1890年
 
-
-
 + magnanious
   + **adj.**宽宏的
   + **网络**宽宏大量的；大度；慷慨的
   + 1580年代，“高尚勇敢或勇敢”，来自 *magnanimity* + *-ous*，或者来自拉丁语 *magnanimus* “高尚”，字面意思是“大灵魂”，来自 ***magnus*** “**大**”（来自 PIE 词根 [*meg-](https://www.etymonline.com/cn/word/*meg-) “大”）+ ***animus*** “**心灵，灵魂，精神**”
-
-
+  + `Magnanimous`（正确拼写）源于拉丁语词根 **`magn-`**（大）与 **`animus`**（精神、心灵），字面意为“心胸宽广”，现特指**对弱者或对手展现的宽容大度**
 
 + animosity
   + **n.**仇恨；敌意；愤怒；憎恶
   + **网络**憎恨；怨恨；怨仇
   + 15世纪初，“活力，勇气”（现在已不再使用此义），来自14世纪的古法语 *animosité* 或直接来自拉丁语 *animositatem*（主格 *animositas*），意为“大胆，热情”，源于 *animus* “生命，呼吸”的形容词形式 *animosus*（来自 PIE 词根 [*ane-](https://www.etymonline.com/cn/word/*ane-)，“呼吸”）。 “积极敌对的感觉”是从大约1600年开始使用，并源于拉丁语的第二意义。
 
-
-
 + inanimate
   + **adj.**无生命的；死的；像已死的
   + **网络**无生气的；死气沉沉的；非动物的
   + 15世纪早期，“**没有生命力，失去生命**”的意思，来自晚期拉丁语 *inanimatus* “没有生命的”，来自 *in-* “不”（见 [in-](https://www.etymonline.com/cn/word/in-)（1））和 *animatus*（见 [animation](https://www.etymonline.com/cn/word/animation)）。在形式和意义上最接近拉丁语的词是 *inanimalis*。意思是“缺乏活力，没有精神，呆滞”来自1734年。*Inanimate* 作为动词的意思是“注入生命或活力”
-
-
 
 ### FIG-"to shape or mold"
 
@@ -48,27 +39,19 @@ Latin
   + **网络**比喻性的；象征的；比喻用法
   + 14世纪末，"**象征性的**"，源自古法语 *figuratif* "比喻的"，源自晚期拉丁语 *figurativus* "比喻的"（指言语），源自 *figurat-*，拉丁语的过去分词词干 *figurare* "形成，塑造"，源自 *figura* "形状，形式，图像"（源自 PIE 词根 [*dheigh-](https://www.etymonline.com/cn/word/*dheigh-) "形成，建造"）。指言语，语言等，"寓言的，比喻的，涉及修辞手法的"
 
-
-
 + configuration
   + **n.**结构；布局；构造；形状
   + **网络**配置；组态；构型
   + "**由部分的安排和布置所形成的外部形式或形状**"，1550年代，源自晚期拉丁语 *configurationem*（主格 *configuratio*），是拉丁语 *configurare* 的动名词，意为“按照模式制作”，由拉丁语 *com*（意为“与，一起”，见 [con-](https://www.etymonline.com/cn/word/con-))和 *figurare*（意为“形成，塑造”）的同化形式组成，源自 *figura*（意为“形状，形式，图形”），源自 PIE 词根 [*dheigh-](https://www.etymonline.com/cn/word/*dheigh-)（意为“形成，建造”）。
 
-
-
 + effigy
   + **n.**（名人、圣人或神的）雕像；（丑化人的）模拟像
   + "人的形象"，来自1530年的法语 *effigie*（13世纪），源自拉丁语 *effigies* “复制或模仿某物，相似，形象，雕像”，源自或与 *effingere* “塑造，时尚，描绘”有关，源自 *ex* “出”（见 [ex-](https://www.etymonline.com/cn/word/ex-)) + *fingere* “形成，塑造”
-
-
 
 + figment
   + **n.**虚构；虚构的事物
   + **网络**虚构的东西；臆造的事物；虚构之事
   + 15世纪初，“**发明或想象的东西，神话或寓言； 欺骗性的做法； 错误的教义**”，源自拉丁语 *figmentum* “形成或制作的东西，创造”，与 *figura* “形状”相关（源自 PIE 词根 [*dheigh-](https://www.etymonline.com/cn/word/*dheigh-) “形成，建造”）。
-
-
 
 ### ANN/ENN - "year"
 
@@ -78,15 +61,11 @@ Latin
   - **n.**年金（常为养老金）；年金保险； **网络**年金享受权；年金计划；年金折旧
   - 15世纪初， *annuite*，"**一笔每年分期支付的年度津贴、补助金**"，源自盎格鲁-法语和古法语 *annuité* "年金"（14世纪）或直接源自中世纪拉丁语 *annuitatem*（主格 *annuitas*），源自拉丁语 *annus* "年"（参见 [annual](https://www.etymonline.com/cn/word/annual)（形容词））。"投资使人有资格获得等额年度支付"的意思始于1690年代。
 
-
-
 + superannuated
   + **adj.**年老不能工作的；陈旧不中用的；过时的
   + 1630年代，“**过时的，过时的**”； 1740年，“因年老而退休”，源自现代拉丁语 *superannuatus*，这是中世纪拉丁语 *superannatus* 的改编（可能受到 *annual* 的影响），后者指“**超过一岁的**”并用于牲畜，来自拉丁语 *super* “超过，超过”（见 [super-](https://www.etymonline.com/cn/word/super-)) + *annus* “年”（见 [annual](https://www.etymonline.com/cn/word/annual)（形容词））。早期的同义词是 *superannate*（约1600年），来自中世纪拉丁语 *superannatus*。比较法语 *suranner*。
   +  incapacitated or disqualified for active duty by advanced age
   + older than the typical member of a specified group
-
-
 
 
 + millennium
@@ -95,13 +74,9 @@ Latin
   + Since in Latin ***mille*** means "**thousand**", a millennium lasts 1,000 years
 
 
-
-
 + perennial
   + **adj.**长久的；持续的；反复出现的；多年生的；**n.**多年生植物
   + present at all seasons of the year
-
-
 
 
 ### EV-"age" or "lifetime"
@@ -110,13 +85,9 @@ Latin aevum
 
 related to Greek **aion**, from which we get the word eon, meaning "**a very long period of time**"
 
-
-
 + coeval
   + **adj.**（与…）同龄；**n.**同时代的人
   + of the same or equal age, antiquity, or duration
-
-
 
 
 + longevity
@@ -124,20 +95,14 @@ related to Greek **aion**, from which we get the word eon, meaning "**a very lon
   +  a long duration of individual life
 
 
-
-
 + medieval
   + **adj.**中世纪的（约公元 1000 到 1450 年）；**网络**中古的；中世纪战争；仿中世纪的
   + of, relating to, or characteristic of the Middle Ages
 
 
-
-
 + primeval
   + **adj.**远古的；原始的；出于原始天性的
   + of or relating to the earliest ages
-
-
 
 
 ### CORP-"body"
@@ -148,13 +113,9 @@ A corpse is a dead body, A corporation is also a kind of body, since it may act 
 
 And a corps is a "body" of soldiers
 
-
-
 + corporeal
   + **adj.**物质的；有形的；实体的；身体的
   + having, consisting of, or relating to a physical material body
-
-
 
 
 + corpulent
@@ -163,13 +124,9 @@ And a corps is a "body" of soldiers
   + "肥胖的，丰满的，健壮的"，14世纪晚期，来自古法语 *corpulent* "健壮的，肥胖的"，源自拉丁语 *corpulentus* "肉质的，肥胖的"，源自 ***corpus*** "**身体**"（来自 PIE 词根 [*kwrep-](https://www.etymonline.com/cn/word/*kwrep-) "身体，形态，外貌"）+ *-**ulentus*** "**充满的**"
 
 
-
-
 + corporal
   + **adj.**身体上的；人身的；【动】躯干的；**n.**（陆军、海军陆战队或英国空军的）下士（会被体罚的）
   + of, relating to, or affecting the body
-
-
 
 
 + incorporate
@@ -292,7 +249,6 @@ Latin signum
 + signet
   + **n.**印；图章；玺；〈比喻〉痕迹
   + 14世纪晚期，“**小印章**”（尤指戒指上的私人印章），源自古法语 *signet* “**小印章**”，是 *signe* “**标记**”的小型化形式（参见 [sign](https://www.etymonline.com/cn/word/sign)（n.））。***Signet-ring*** 出现于1680年代。
-
 
 
 
