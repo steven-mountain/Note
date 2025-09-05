@@ -108,3 +108,164 @@
 + decapitate
   + v 斩首
   + capit = 头
+
+### NULL = not
+
+nil = 无，零
+
++ annulment
+  + *n.*取消；废除
++ null
+  + *adj.*无约束力的，无效的；零值的，等于零的；（数）（集合，矩阵）空的，元素只有零的；无特征的，无内涵的
+  + *n.*<文>零；（密码中的）无意义暗码；（电子）无信号；无电磁辐射的方向
+  + *v.*使（信号）与另一信号结合产生无信号状态，抵消
+  + null and void
++ nullity
+  + *n.*无效；无价值的事物或人；[数] 零度；退化阶数
++ nullify
+  + *vt.*使无效，作废；取消
++ annihilate
+  + *vt.*歼灭；战胜；废止
+  + *vi.*湮灭；湮没
++ nihilism
+  + n 虚无主义
+
+
+
+### ARM = make love not war
+
+武器，工具
+
++ arm
+  + *n.*手臂，上肢；武器，军备；扶手；袖子；职能部门；臂（状部件）；盾徽，纹章；狭长港湾；臂力
+  + *v.*武装，备战；提供，配备；使（炸弹等）随时爆炸，准备发射
++ disarm
+  + *v.*缴……的械，解除……的武装；拆除（炸弹等的）引信；使友好，消除……的敌意；裁减军备，裁军
+  + *n.*解除（某人的）武器
++ disarming
+  + *adj.*使解除警戒心的；使人消气的
+  + *v.*解除武装；使息怒（disarm 的现在分词）
++ armor
+  + n 盔甲
++ army
+  + n 军队
++ armory
+  + n 军械库，兵工厂
++ armada
+  + n 舰队；西班牙无敌舰队
++ armistice
+  + n 停战
+  + sti = stand
+
+
+
+### SURG = rise
+
+升起来，弹起来，涌动出来
+
++ surge
+  + v/n 剧增，涌动
++ upsurge
+  + n 猛增
++ insurgency
+  + n 叛军；非常规暴动
++ counterinsurgency
+  + n 反叛乱
+  + contra- 反
++ resurgent
+  + adj 复活的，复兴的
+
+
+
+### STRAT = bed， layer
+
+层
+
++ stratum
+  + *n.*（组织的）层；[地质] 地层；社会阶层
+  + -um 单数，-uma 复数
++ stratify
+  + v 阶层化
++ substrate
+  + n 基质层
++ stratocumulus
+  + n 层积云
+  + cum- 积累
++ prostrate
+  + 向前躺平，俯卧
+  + *adj.*俯卧的；拜倒的；降伏的；沮丧的
+  + *vt.*使……屈服；将……弄倒；使……俯伏
+
+
+
+### LATER = side，wide
+
+边，宽
+
++ lateral
+  + *adj.*侧面的，横（向）的；（职位、工作、关系等）平级的，同级的；<英>多角度思考的；（辅音，尤指英语清音l，或其发音）边音的，旁流音的
+  + *n.*物体旁侧部分，（尤指长于植物主干一侧的）侧芽，侧枝；边音，旁流音；侧向传球
+  + *v.*横向传球
++ multilateral
+  + adj 多边的
++ collateral
+  + *n.*抵押物，担保品；旁系亲属
+  + *adj.*附属的，次要的；（亲戚）旁系的，非直系的；并列的，并行的
++ latitude
+  + 维度，地球的宽度，自由度
++ longitude
+  + n 经度，地球的长度
+
+
+
+### TOM = cut
+
+切掉
+
++ lobotomy
+  + *n.*叶切断术；前脑叶白质切除术
+  + lobe，叶状，脑叶，肺叶，耳垂，树叶
++ appendectomy
+  + *n.*[外科] 阑尾切除术
++ gastrectomy
+  + n 胃切除
+  + gastro = stomach，胃
++ mastectomy
+  + n 乳房切除
++ lumpectomy
+  + n 乳房肿块切除
+  + lump 块
++ anatomy
+  + n 解剖
+  + ana-， apart
++ atom
+  + n 原子
+  + a-，否定；不能再切了
+
+
+
+### IATR = healer，physician
+
+治愈者，医生
+
++ pediatrician
+  + n 儿科医生
++ psychiatrist
+  + n 精神科医生
++ physiatrist
+  + n 身体理疗师
+  + physical- 身体的，物理的
++ iatrogenic
+  + adj 由医疗事故引起的
++ bariatric
+  + adj 治疗肥胖的
+  + baros， weight 重量
++ geriatric
+  + adj 老年医学的
+  + gere/gero = grow old
++ podiatric
+  + n 足病医生
++ chiropodist
+  + n 手足病医生
+  + chiro = hand，以前英国看手的医生也看脚
++ 
