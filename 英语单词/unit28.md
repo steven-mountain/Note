@@ -161,3 +161,147 @@
   + phylax = guard
 + proactive
   + adj 有前瞻性的
+
+
+
+### RE- again
+
+再次
+
++ reconcile
+  + council 委员会，会议
+  + *v.*调和，使协调一致；（使）和解，（使）恢复友好关系；调停，调解（争吵）；使顺从于，使接受；核对，查核（账目）
+  + counciliate，counsel
++ rejuvenate
+  + v 再次青春
+  + juvenis， Latin for young
++ resume
+  + v 重新开始
+  + n 发音不同，简历（需要简历的时候，就是重新开始的时候）
++ remorse
+  + n 懊悔
+  + morse，咬；很多懊悔的事儿，会（死去的回忆在攻击你？）
++ reiterate
+  + 再说一次，反复说
+  + 再次重申
++ redundancy
+  + n 啰嗦
+  + und = wave
++ reincarnation
+  + n 转世
+  + carn = 肉
+
+ 
+
+### RE = back
+
+往回
+
++ react
+  + v 反应
+  + act，行动
++ reciprocate
+  + *v.*报答，回报；（感情上）回应，对应；（机件）往复运动
+  + *v.*逐渐远离，渐渐退去；（质量）下降，（问题或疾病等）逐渐减弱；（前额的头发）脱落；（面部特征）向后倾斜；（常指牙龈因为感染）萎缩
+  + recede + forward正所谓来而不往非礼也
+  + "Reciprocate" 约在17世纪初开始使用，意为“相互给予和接受” 。它可能由名词 "reciprocation" 逆向构词而成，或直接源自拉丁语动词 **`reciprocare`**（意为“来回移动；逆转某物的运动”）的过分词 **`reciprocatus`**。这个词根 **`reciprocus`** 本身意为“沿原路返回，交替的”
++ reciprocal
+  + adj. 互惠的
++ reciprocity
+  + n 互惠的
++ rebut
+  + v 反驳
+  + butt = 头
++ revoke
+  + voc 说
+  + v 撤销
++ regress
+  + v 倒退
+  + gress = go
++ recede
+  + *v.*逐渐远离，渐渐退去；（质量）下降，（问题或疾病等）逐渐减弱；（前额的头发）脱落；（面部特征）向后倾斜；（常指牙龈因为感染）萎缩
++ revert to
+  + v 返回
+  + vert = turn
++ reverse
+  + v/n 逆转
+  + vert = turn
++ reflect
+  + v 反省，反射
+  + -flect = bend（弯曲）
++ rebound
+  + n/v 反弹
+  + bound 弹
+
+
+
+### DERM = skin
+
++ hypodermic
+
+  + 皮下注射
+
++ dermatology
+
+  + n 皮肤医学
+
++ dermatopathy
+
+  + pathy 病症
+
++ dermal
+
+  + adj 皮肤的
+
+  + cosmetic 化妆品，因为化妆品像宇宙一样有序？
+
+  + "Cosmetic" 大约在**17世纪初**（约1600年）进入英语，最初指“**美化人体的技艺**”
+
+    。它源自希腊语 **`kosmetike (tekhnē)`**（**服装与装饰的技艺**），经由拉丁语化的希腊语形容词 **`kosmetikos`**（意为“**擅长装饰或布置的**”）和法语 **`cosmétique`** 演变而来
+
++ epidermis
+
+  + n 表皮
+  + epi- 周围
+
++ epidemic-pandemic-endemic
+
++ pachyderm
+
+  + **`pachys`**（παχύς）：意为“**厚的、大的、沉重的**”
+  + n 大型厚皮动物
+
++ taxidermist
+
+  + texi = arrange
+  + *n.*动物标本剥制者；剥制师
+
++ dermatitis
+
+  + *n.*[皮肤] 皮炎；皮肤炎
+  + **`-itis`** (炎症): 这是一个源自希腊语的后缀，用于表示“**炎症**”或“**炎症性疾病**”
+
+
+
+### ENDO = within
+
+在里面
+
++ endogamy
+  + n族内婚，群内婚
+  + **`gamos`**：意为“**婚姻、 union**”
++ endocrine
+  + *adj.*内分泌（腺）的
+  + *n.*内分泌；内分泌腺；内分泌物；激素
+  + cri/cre 分泌
+  + secrete，分泌
+  + secret，秘密
++ endodontic
+  + adj 牙髓的
+  + 牙齿内部的
++ endogenous
+  + adj 内源的，体内的，细胞内的，系统内的
++ endorphin
+  + n 有镇痛作用的内分泌激素
++ endocarditis
+  + n 心内膜炎
