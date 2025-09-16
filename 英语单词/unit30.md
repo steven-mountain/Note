@@ -91,5 +91,85 @@
 + longitude
   + n 经度
 
+### idio
+
+和自己有关系，和个人有关系。自我
+
++ idiom
+  + n 习语
+  + 属于特定的人的
++  idiomatic
+  + adj 自然地道的
++ idiosyncratic
+  + adj 独特的
+  +  从这个表格可以看出，“idiosyncratic” 的字面意思是“**个人特有的混合体**”，引申为“**特质的、独特的、异质的**”。
++ idiopathic
+  + adj 自发的，先天的，特发的
+  + "Idiopathic" 源自希腊语 "**idios**"（自身的）和 "**pathos**"（痛苦、疾病）的组合。
+  + 其本义是“**自身发生的疾病**”，即**找不到外在原因（如感染、创伤、中毒等），而是源于身体内部自身功能的紊乱或未知因素**的疾病。
++ idiot
+  + n 蠢人
 
 
+
+### AERO = air
+
++ aerial
+  + adj 空中的；n 天线，空中翻腾
++ aerialist
+  + n 高空杂技演员
++ aerospace
+  + n 航空航天
++ aerodynamic
+  + adj 空气动力学的
++ aerophobia
+  + n 飞行恐惧症
++ aerate
+  + v 充气
++ aerator
+  + *n.*通风装置
++ aerobic
+  + *adj.*需氧的；有氧（健身）的
++ anaerobic
+  + adj 厌氧的
+
+
+
+### CAD = fall
+
++ deciduous
+  + adj 落叶的
++ cascade
+  + v 倾泻
+  + n 瀑布，一连串
++ cadaver
+  + n 尸体
++ decadent
+  + adj 堕落的
+  + n 堕落者
++ cadence
+  + n 终止音节；抑扬顿挫
++ cadenza
+  + n 华彩乐段
+
+
+
+### TRIB ≈ tribe = give/play
+
++ tribune
+  + n 报纸论坛，古罗马受人拥戴的领袖，演讲论坛
++ distribute
+  + v 分发
+  + dispense
++ contribute
+  + v 贡献
++ tribute
+  + n 献礼，称赞，朝贡
++ tributary
+  + n 支流
++ attribute
+  + v 归因于
+  + n 属性
++ retribution
+  + n 报应
+  + re- back
